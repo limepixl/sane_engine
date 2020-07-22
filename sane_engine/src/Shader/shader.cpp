@@ -44,7 +44,7 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
         GLsizei length = 0;
         GLchar message[1024];
         glGetShaderInfoLog(vertex, 1024, &length, message);
-        printf("%s\n", message);
+        printf("Vertex Shader Compilation Errors:\n%s\n", message);
     }
 
     // Create fragment shader object
@@ -59,7 +59,7 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
         GLsizei length = 0;
         GLchar message[1024];
         glGetShaderInfoLog(fragment, 1024, &length, message);
-        printf("%s\n", message);
+        printf("Fragment Shader Compilation Errors:\n%s\n", message);
     }
 
     GLuint ID = glCreateProgram();

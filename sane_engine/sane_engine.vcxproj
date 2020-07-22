@@ -88,12 +88,15 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh\mesh.cpp" />
     <ClCompile Include="src\Shader\shader.cpp" />
+    <ClCompile Include="src\Texture\texture.cpp" />
     <ClCompile Include="thirdparty\glad\glad.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Display\display.h" />
     <ClInclude Include="src\Mesh\mesh.h" />
     <ClInclude Include="src\Shader\shader.h" />
+    <ClInclude Include="src\Texture\stb_image.h" />
+    <ClInclude Include="src\Texture\texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

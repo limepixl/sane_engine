@@ -5,8 +5,8 @@
 
 struct Display
 {
-	unsigned width, height;
+	int width, height;
 	GLFWwindow* window;
 };
 
-Display CreateDisplay(unsigned width, unsigned height, const char* title);
+Display CreateDisplay(int width, int height, const char* title);

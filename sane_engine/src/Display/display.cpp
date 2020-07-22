@@ -5,7 +5,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-Display CreateDisplay(unsigned width, unsigned height, const char* title)
+Display CreateDisplay(int width, int height, const char* title)
 {
 	GLFWwindow* window;
 
