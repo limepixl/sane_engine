@@ -3,6 +3,8 @@
 #include <sstream>
 #include <cstdio>
 
+#include <glm/gtc/type_ptr.hpp>
+
 // TODO: Clean up reading code
 Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
@@ -72,4 +74,22 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     glDeleteShader(fragment);
 
     return { ID };
+}
+
+void SetFloat(float value, const char* location, Shader* shader)
+{
+    int loc = glGetUniformLocation(shader->ID, location);
+    glUniform1f(loc, value);
+}
+
+void SetInt(int value, const char* location, Shader* shader)
+{
+    int loc = glGetUniformLocation(shader->ID, location);
+    glUniform1f(loc, value);
+}
+
+void SetMat4(glm::mat4& value, const char* location, Shader* shader)
+{
+    int loc = glGetUniformLocation(shader->ID, location);
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
 }

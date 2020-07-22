@@ -7,7 +7,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 Display CreateDisplay(unsigned width, unsigned height, const char* title)
 {
-	Display tmp;
+	GLFWwindow* window;
 
 	// Initialize GLFW
 	glfwInit();
@@ -17,14 +17,14 @@ Display CreateDisplay(unsigned width, unsigned height, const char* title)
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
 	// Create GLFW window
-	tmp.window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-	if(tmp.window == nullptr)
+	window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+	if(window == nullptr)
 	{
 		printf("Failed to create GLFW window!\n");
 		glfwTerminate();
 	}
-	glfwMakeContextCurrent(tmp.window);
-	glfwSetFramebufferSizeCallback(tmp.window, framebuffer_size_callback);
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	// Initialize GLAD
 	if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -34,6 +34,7 @@ Display CreateDisplay(unsigned width, unsigned height, const char* title)
 	}
 	glViewport(0, 0, width, height);
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
 
-	return tmp;
+	return {width, height, window};
 }
