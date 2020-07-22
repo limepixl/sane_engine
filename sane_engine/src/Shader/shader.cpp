@@ -85,7 +85,7 @@ void SetFloat(float value, const char* location, Shader* shader)
 void SetInt(int value, const char* location, Shader* shader)
 {
     int loc = glGetUniformLocation(shader->ID, location);
-    glUniform1f(loc, value);
+    glUniform1i(loc, value);
 }
 
 void SetMat4(glm::mat4& value, const char* location, Shader* shader)
