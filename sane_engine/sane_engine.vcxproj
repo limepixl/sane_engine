@@ -55,7 +55,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\dev\libs\GLFW\include;C:\dev\libs\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\libs\GLFW\include;C:\dev\projects\sane_engine\sane_engine\src;C:\dev\libs\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -85,12 +85,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\shader.cpp" />
+    <ClCompile Include="src\Mesh\mesh.cpp" />
+    <ClCompile Include="src\Shader\shader.cpp" />
     <ClCompile Include="thirdparty\glad\glad.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\display.h" />
-    <ClInclude Include="src\shader.h" />
+    <ClInclude Include="src\Display\display.h" />
+    <ClInclude Include="src\Mesh\mesh.h" />
+    <ClInclude Include="src\Shader\shader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

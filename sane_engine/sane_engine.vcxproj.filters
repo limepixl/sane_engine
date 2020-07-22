@@ -21,15 +21,21 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\shader.cpp">
+    <ClCompile Include="src\Shader\shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh\mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\display.h">
+    <ClInclude Include="src\Display\display.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\shader.h">
+    <ClInclude Include="src\Shader\shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh\mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

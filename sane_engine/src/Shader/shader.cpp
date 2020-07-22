@@ -4,10 +4,13 @@
 #include <cstdio>
 
 // TODO: Clean up reading code
-Shader LoadFromFile(const char* vertexShaderPath, const char* fragmentShaderPath)
+Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
     // Load files into memory
     std::ifstream vsRaw(vertexShaderPath);
+    if(!vsRaw.is_open())
+        printf("Failed to open file at path: %s\n", vertexShaderPath);
+
     std::stringstream vsStream;
     vsStream << vsRaw.rdbuf();
     vsRaw.close();
@@ -16,6 +19,9 @@ Shader LoadFromFile(const char* vertexShaderPath, const char* fragmentShaderPath
     const char* vsSource = vsString.c_str();
 
     std::ifstream fsRaw(fragmentShaderPath);
+    if(!fsRaw.is_open())
+        printf("Failed to open file at path: %s\n", fragmentShaderPath);
+
     std::stringstream fsStream;
     fsStream << fsRaw.rdbuf();
     fsRaw.close();
