@@ -1,8 +1,9 @@
 #pragma once
+#include <glad/glad.h>
 
 struct Shader
 {
-	unsigned int ID;
+	GLuint ID;
 };
 
 Shader LoadFromFile(const char* vertexShaderPath, const char* fragmentShaderPath);
