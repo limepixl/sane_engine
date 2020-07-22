@@ -55,7 +55,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\dev\libs\glm;C:\dev\libs\GLFW\include;C:\dev\projects\sane_engine\sane_engine\src;C:\dev\libs\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\libs\glm;C:\dev\libs\GLFW\include;C:\dev\projects\sane_engine\sane_engine\src;C:\dev\libs\glad\include;%(AdditionalIncludeDirectories);C:\dev\projects\sane_engine\thirdparty</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -72,7 +72,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\dev\projects\sane_engine\sane_engine\src;C:\dev\libs\glm;C:\dev\libs\GLFW\include;C:\dev\libs\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\dev\projects\sane_engine\sane_engine\src;C:\dev\libs\glm;C:\dev\libs\GLFW\include;C:\dev\libs\glad\include;%(AdditionalIncludeDirectories);C:\dev\projects\sane_engine\thirdparty</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -84,12 +84,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\thirdparty\glad\glad.c" />
     <ClCompile Include="src\Display\display.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh\mesh.cpp" />
     <ClCompile Include="src\Shader\shader.cpp" />
     <ClCompile Include="src\Texture\texture.cpp" />
-    <ClCompile Include="thirdparty\glad\glad.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Display\display.h" />
