@@ -88,12 +88,14 @@
     <ClCompile Include="src\Display\display.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh\mesh.cpp" />
+    <ClCompile Include="src\ResManagement\resource_management.cpp" />
     <ClCompile Include="src\Shader\shader.cpp" />
     <ClCompile Include="src\Texture\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Display\display.h" />
     <ClInclude Include="src\Mesh\mesh.h" />
+    <ClInclude Include="src\ResManagement\resource_management.h" />
     <ClInclude Include="src\Shader\shader.h" />
     <ClInclude Include="src\Texture\stb_image.h" />
     <ClInclude Include="src\Texture\texture.h" />

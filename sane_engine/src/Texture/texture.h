@@ -7,5 +7,4 @@ struct Texture
 	GLuint ID, index;
 };
 
-Texture LoadTextureFromFile(const char* path, unsigned int index);
 void BindTexture(Texture* texture);
