@@ -7,4 +7,4 @@ struct Texture
 	GLuint ID, index;
 };
 
-void BindTexture(Texture* texture);
+void BindTexture(Texture& texture);

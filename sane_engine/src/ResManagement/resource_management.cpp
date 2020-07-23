@@ -130,20 +130,20 @@ std::vector<unsigned int> stripFaceDataFromToken(std::string& token)
     {
         if(token[i] == '/')
         {
-            indices.push_back((unsigned int)std::atoi(std::string(token.begin() + size_t(lastChar + 1), token.begin() + i).c_str()) - 1);
+            indices.push_back((unsigned int)std::atoi(std::string(token.begin() + size_t(lastChar + 1), token.begin() + i).c_str()));
             lastChar = i;
         }
 
         if(i == token.size() - 1)
         {
-            indices.push_back((unsigned int)std::atoi(std::string(token.begin() + size_t(lastChar + 1), token.end()).c_str()) - 1);
+            indices.push_back((unsigned int)std::atoi(std::string(token.begin() + size_t(lastChar + 1), token.end()).c_str()));
         }
     }
 
     return indices;
 }
 
-// TODO: Move this, shader and texture loading into separate files
+// TODO: Create an indexed version of this
 Mesh LoadMeshFromOBJ(const char* path)
 {
     std::ifstream objRaw(path);
@@ -169,26 +169,26 @@ Mesh LoadMeshFromOBJ(const char* path)
             std::string x, y, z;
             objRaw >> x >> y >> z;
 
-            vertices.push_back((float)std::atof(x.c_str()));
-            vertices.push_back((float)std::atof(y.c_str()));
-            vertices.push_back((float)std::atof(z.c_str()));
+            vertices.push_back((float)std::stof(x));
+            vertices.push_back((float)std::stof(y));
+            vertices.push_back((float)std::stof(z));
         }
         else if(token == "vt")
         {
             std::string u, v;
             objRaw >> u >> v;
 
-            uvs.push_back((float)std::atof(u.c_str()));
-            uvs.push_back((float)std::atof(v.c_str()));
+            uvs.push_back((float)std::stof(u));
+            uvs.push_back((float)std::stof(v));
         }
         else if(token == "vn")
         {
             std::string x, y, z;
             objRaw >> x >> y >> z;
 
-            normals.push_back((float)std::atof(x.c_str()));
-            normals.push_back((float)std::atof(y.c_str()));
-            normals.push_back((float)std::atof(z.c_str()));
+            normals.push_back((float)std::stof(x));
+            normals.push_back((float)std::stof(y));
+            normals.push_back((float)std::stof(z));
         }
         else if(token == "f")
         {
@@ -199,34 +199,37 @@ Mesh LoadMeshFromOBJ(const char* path)
             std::vector<unsigned int> secondVertexData = stripFaceDataFromToken(second);
             std::vector<unsigned int> thirdVertexData = stripFaceDataFromToken(third);
 
-            vertexIndices.push_back(firstVertexData[0]);
-            vertexIndices.push_back(secondVertexData[0]);
-            vertexIndices.push_back(thirdVertexData[0]);
+            vertexIndices.push_back(firstVertexData[0] - 1);
+            vertexIndices.push_back(secondVertexData[0] - 1);
+            vertexIndices.push_back(thirdVertexData[0] - 1);
 
-            textureIndices.push_back(firstVertexData[1]);
-            textureIndices.push_back(secondVertexData[1]);
-            textureIndices.push_back(thirdVertexData[1]);
+            textureIndices.push_back(firstVertexData[1] - 1);
+            textureIndices.push_back(secondVertexData[1] - 1);
+            textureIndices.push_back(thirdVertexData[1] - 1);
 
-            normalIndices.push_back(firstVertexData[2]);
-            normalIndices.push_back(secondVertexData[2]);
-            normalIndices.push_back(thirdVertexData[2]);
+            normalIndices.push_back(firstVertexData[2] - 1);
+            normalIndices.push_back(secondVertexData[2] - 1);
+            normalIndices.push_back(thirdVertexData[2] - 1);
         }
     }
 
     std::vector<float> finalVertices;
     std::vector<float> finalUVs;
+    std::vector<float> finalNormals;
     for(int i = 0; i < vertexIndices.size(); i++)
     {
-        int vindex = vertexIndices[i];
-        finalVertices.push_back(vertices[vindex * 3]);
-        finalVertices.push_back(vertices[vindex * 3 + 1]);
-        finalVertices.push_back(vertices[vindex * 3 + 2]);
+        finalVertices.push_back(vertices[3 * vertexIndices[i]]);
+        finalVertices.push_back(vertices[3 * vertexIndices[i] + 1]);
+        finalVertices.push_back(vertices[3 * vertexIndices[i] + 2]);
 
-        int uvindex = textureIndices[i];
-        finalUVs.push_back(uvs[uvindex * 2]);
-        finalUVs.push_back(uvs[uvindex * 2 + 1]);
+        finalUVs.push_back(uvs[2 * textureIndices[i]]);
+        finalUVs.push_back(uvs[2 * textureIndices[i] + 1]);
+
+        finalNormals.push_back(normals[3 * normalIndices[i]]);
+        finalNormals.push_back(normals[3 * normalIndices[i] + 1]);
+        finalNormals.push_back(normals[3 * normalIndices[i] + 2]);
     }
 
-    return GenerateMesh(finalVertices.data(), finalVertices.size(), finalUVs.data(), finalUVs.size());
+    return GenerateMesh(finalVertices.data(), (int)finalVertices.size(), finalUVs.data(), (int)finalUVs.size());
 }
 

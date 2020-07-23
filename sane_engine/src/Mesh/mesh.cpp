@@ -3,6 +3,12 @@
 Mesh::~Mesh()
 {
 	glDeleteBuffers(1, &verticesVBO);
+	glDeleteVertexArrays(1, &VAO);
+}
+
+MeshIndexed::~MeshIndexed()
+{
+	glDeleteBuffers(1, &verticesVBO);
 	glDeleteBuffers(1, &EBO);
 	glDeleteVertexArrays(1, &VAO);
 }
@@ -37,10 +43,10 @@ Mesh GenerateMesh(float* vertices, int numVertices, float* texCoords, int numTex
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	return { VAO, VBO1, VBO2, 0, numVertices, 0 };
+	return { VAO, VBO1, VBO2, numVertices };
 }
 
-Mesh GenerateMeshIndexed(float* vertices, int numVertices, float* texCoords, int numTexCoords, unsigned int* indices, int numIndices)
+MeshIndexed GenerateMeshIndexed(float* vertices, int numVertices, float* texCoords, int numTexCoords, unsigned int* indices, int numIndices)
 {
 	// Generate vertex array object
 	GLuint VAO;
@@ -80,20 +86,18 @@ Mesh GenerateMeshIndexed(float* vertices, int numVertices, float* texCoords, int
 	return {VAO, VBO1, VBO2, EBO, numVertices, numIndices};
 }
 
-void DrawMesh(Mesh* mesh)
+void DrawMesh(Mesh& mesh)
 {
-	glBindVertexArray(mesh->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, mesh->numVertices);
+	glBindVertexArray(mesh.VAO);
+	glDrawArrays(GL_TRIANGLES, 0, mesh.numVertices);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void DrawMeshIndexed(Mesh* mesh)
+void DrawMeshIndexed(MeshIndexed& mesh)
 {
-	glBindVertexArray(mesh->VAO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
-	glDrawElements(GL_TRIANGLES, mesh->numIndices, GL_UNSIGNED_INT, nullptr);
+	glBindVertexArray(mesh.VAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
+	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_INT, nullptr);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-
-
