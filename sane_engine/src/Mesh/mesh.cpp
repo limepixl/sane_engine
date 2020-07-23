@@ -13,7 +13,7 @@ MeshIndexed::~MeshIndexed()
 	glDeleteVertexArrays(1, &VAO);
 }
 
-Mesh GenerateMesh(float* vertices, int numVertices, float* texCoords, int numTexCoords)
+Mesh GenerateMesh(float* vertices, int numVertices, float* texCoords, int numTexCoords, float* normals, int numNormals)
 {
 	// Generate vertex array object
 	GLuint VAO;
@@ -40,10 +40,20 @@ Mesh GenerateMesh(float* vertices, int numVertices, float* texCoords, int numTex
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
 
+	// Generate vertex buffer object for normal data
+	GLuint VBO3;
+	glGenBuffers(1, &VBO3);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO3);
+	glBufferData(GL_ARRAY_BUFFER, numNormals * sizeof(float), normals, GL_STATIC_DRAW);
+
+	// Bind buffer to attribute
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(2);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	return { VAO, VBO1, VBO2, numVertices };
+	return { VAO, VBO1, VBO2, VBO3, numVertices };
 }
 
 MeshIndexed GenerateMeshIndexed(float* vertices, int numVertices, float* texCoords, int numTexCoords, unsigned int* indices, int numIndices)

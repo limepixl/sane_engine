@@ -230,6 +230,6 @@ Mesh LoadMeshFromOBJ(const char* path)
         finalNormals.push_back(normals[3 * normalIndices[i] + 2]);
     }
 
-    return GenerateMesh(finalVertices.data(), (int)finalVertices.size(), finalUVs.data(), (int)finalUVs.size());
+    return GenerateMesh(finalVertices.data(), (int)finalVertices.size(), finalUVs.data(), (int)finalUVs.size(), finalNormals.data(), (int)finalNormals.size());
 }
 

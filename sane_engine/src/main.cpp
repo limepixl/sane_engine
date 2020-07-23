@@ -10,7 +10,7 @@ int main()
 {
 	Display display = CreateDisplay(1280, 720, "Sane Engine");
 
-	Shader texture3D = LoadShaderFromFile("res/shaders/texture3Dvs.glsl", "res/shaders/texture3Dfs.glsl");
+	Shader texture3D = LoadShaderFromFile("res/shaders/normalsvs.glsl", "res/shaders/normalsfs.glsl");
 	glUseProgram(texture3D.ID);
 
 	glm::mat4 view(1.0f);
