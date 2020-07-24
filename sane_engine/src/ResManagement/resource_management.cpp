@@ -117,27 +117,24 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     std::unordered_map<std::string, int> uniforms;
 
     // Go through shader source and find uniform names
-    std::string token;
-    while(vsStream >> token)
+    std::string tokenv, tokenf;
+    while(vsStream >> tokenv || fsStream >> tokenf)
     {
-        if(token == "uniform")
+        if(tokenv == "uniform")
         {
-            vsStream >> token;
-            vsStream >> token; // Contains the name of the uniform
+            vsStream >> tokenv;
+            vsStream >> tokenv; // Contains the name of the uniform
 
-            uniforms[std::string(token.begin(), token.end() - 1)] = 0;
+            uniforms[std::string(tokenv.begin(), tokenv.end() - 1)] = 0;
         }
-    }
 
-    while(fsStream >> token)
-    {
-        if(token == "uniform")
+        if(tokenf == "uniform")
         {
-            fsStream >> token;
-            fsStream >> token; // Contains the name of the uniform
+            fsStream >> tokenf;
+            fsStream >> tokenf; // Contains the name of the uniform
 
             // I remove the last char because it's ';'
-            uniforms[std::string(token.begin(), token.end() - 1)] = 0;
+            uniforms[std::string(tokenf.begin(), tokenf.end() - 1)] = 0;
         }
     }
 
