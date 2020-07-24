@@ -1,18 +1,5 @@
 #include "mesh.h"
 
-Mesh::~Mesh()
-{
-	glDeleteBuffers(1, &verticesVBO);
-	glDeleteVertexArrays(1, &VAO);
-}
-
-MeshIndexed::~MeshIndexed()
-{
-	glDeleteBuffers(1, &verticesVBO);
-	glDeleteBuffers(1, &EBO);
-	glDeleteVertexArrays(1, &VAO);
-}
-
 Mesh GenerateMesh(float* vertices, int numVertices, float* texCoords, int numTexCoords, float* normals, int numNormals)
 {
 	// Generate vertex array object
@@ -110,4 +97,12 @@ void DrawMeshIndexed(MeshIndexed& mesh)
 	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_INT, nullptr);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Clean(Mesh& m)
+{
+	glDeleteBuffers(1, &m.verticesVBO);
+	glDeleteBuffers(1, &m.texCoordsVBO);
+	glDeleteBuffers(1, &m.normalsVBO);
+	glDeleteVertexArrays(1, &m.VAO);
 }

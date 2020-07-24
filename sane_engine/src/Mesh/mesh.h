@@ -9,8 +9,6 @@ struct Mesh
 	GLuint normalsVBO;
 
 	int numVertices;
-
-	~Mesh();
 };
 
 struct MeshIndexed
@@ -22,8 +20,6 @@ struct MeshIndexed
 
 	int numVertices;
 	int numIndices;
-
-	~MeshIndexed();
 };
 
 
@@ -31,3 +27,5 @@ Mesh GenerateMesh(float* vertices, int numVertices, float* texCoords, int numTex
 MeshIndexed GenerateMeshIndexed(float* vertices, int numVertices, float* texCoords, int numTexCoords, unsigned int* indices, int numIndices);
 void DrawMesh(Mesh& mesh);
 void DrawMeshIndexed(MeshIndexed& mesh);
+
+void Clean(Mesh& m);

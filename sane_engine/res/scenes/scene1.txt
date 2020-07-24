@@ -1,0 +1,12 @@
+models
+dragon.obj
+barrel1.obj
+
+textures
+dragon_texture_color.png
+barrel1.png
+
+entities
+0 0 1.0 0.0 0.0 0.0 -45.0 0.0 1.0 1.0 1.0 ;
+1 1 -1.0 -0.5 0.0 0.0 0.0 0.0 1.0 1.0 1.0 ;
+#

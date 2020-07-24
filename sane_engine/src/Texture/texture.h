@@ -8,3 +8,5 @@ struct Texture
 };
 
 void BindTexture(Texture& texture);
+
+void Clean(Texture& t);

@@ -3,3 +3,6 @@ TODO:
 * Batching
 * Instanced drawing
 * Custom scene format that describes models lights and positions in the world
+* Visible lights
+* Move over to own math lib (especially for matrix transformations)
+* Experiment with quaternions
