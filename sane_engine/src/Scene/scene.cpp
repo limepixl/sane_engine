@@ -17,9 +17,9 @@ void DrawScene(Scene& scene, Shader& shader)
 		model = glm::rotate(model, glm::radians(e.rotation.y), { 0.0, 1.0, 0.0 });
 		model = glm::rotate(model, glm::radians(e.rotation.z), { 0.0, 0.0, 1.0 });
 		model = glm::scale(model, e.scale);
-		SetMat4(model, "model", shader);
+		glUniformMatrix4fv(shader.locations["model"], 1, GL_FALSE, &model[0][0]);
 
-		SetInt(e.textureIndex, "tex", shader);
+		glUniform1i(shader.locations["tex"], e.textureIndex);
 		BindTexture(scene.textures[e.textureIndex]);
 		DrawMesh(scene.meshes[e.meshIndex]);
 	}

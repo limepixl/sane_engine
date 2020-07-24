@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <unordered_map>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -112,13 +113,46 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     glAttachShader(ID, fragment);
     glLinkProgram(ID);
 
+    // Lookup map for uniform names
+    std::unordered_map<std::string, int> uniforms;
+
+    // Go through shader source and find uniform names
+    std::string token;
+    while(vsStream >> token)
+    {
+        if(token == "uniform")
+        {
+            vsStream >> token;
+            vsStream >> token; // Contains the name of the uniform
+
+            uniforms[std::string(token.begin(), token.end() - 1)] = 0;
+        }
+    }
+
+    while(fsStream >> token)
+    {
+        if(token == "uniform")
+        {
+            fsStream >> token;
+            fsStream >> token; // Contains the name of the uniform
+
+            // I remove the last char because it's ';'
+            uniforms[std::string(token.begin(), token.end() - 1)] = 0;
+        }
+    }
+
+    // Populate unordered map of uniform names
+    // with actual locations
+    for(auto& u : uniforms)
+        uniforms[u.first] = glGetUniformLocation(ID, u.first.c_str());
+
     // Clean up
     glDetachShader(ID, vertex);
     glDetachShader(ID, fragment);
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 
-    return { ID };
+    return { ID, uniforms };
 }
 
 std::vector<unsigned int> stripFaceDataFromToken(std::string& token)
@@ -126,12 +160,12 @@ std::vector<unsigned int> stripFaceDataFromToken(std::string& token)
     std::vector<unsigned int> indices;
 
     int lastChar = -1;
-    for(int i = 0; i < token.size(); i++)
+    for(size_t i = 0; i < token.size(); i++)
     {
         if(token[i] == '/')
         {
             indices.push_back((unsigned int)std::atoi(std::string(token.begin() + size_t(lastChar + 1), token.begin() + i).c_str()));
-            lastChar = i;
+            lastChar = (int)i;
         }
 
         if(i == token.size() - 1)
@@ -216,7 +250,7 @@ Mesh LoadMeshFromOBJ(const char* path)
     std::vector<float> finalVertices;
     std::vector<float> finalUVs;
     std::vector<float> finalNormals;
-    for(int i = 0; i < vertexIndices.size(); i++)
+    for(size_t i = 0; i < vertexIndices.size(); i++)
     {
         finalVertices.push_back(vertices[3 * vertexIndices[i]]);
         finalVertices.push_back(vertices[3 * vertexIndices[i] + 1]);

@@ -90,7 +90,6 @@
     <ClCompile Include="src\Mesh\mesh.cpp" />
     <ClCompile Include="src\ResManagement\resource_management.cpp" />
     <ClCompile Include="src\Scene\scene.cpp" />
-    <ClCompile Include="src\Shader\shader.cpp" />
     <ClCompile Include="src\Texture\texture.cpp" />
   </ItemGroup>
   <ItemGroup>

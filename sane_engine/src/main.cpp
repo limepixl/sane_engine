@@ -12,10 +12,10 @@ int main()
 
 	glm::mat4 view(1.0f);
 	view = glm::translate(view, { 0.0f, 0.0f, -2.0f });
-	SetMat4(view, "view", shader);
+	glUniformMatrix4fv(shader.locations["view"], 1, GL_FALSE, &view[0][0]);
 
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)display.width / (float)display.height, 0.1f, 1000.0f);
-	SetMat4(projection, "projection", shader);
+	glUniformMatrix4fv(shader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
 
 	Scene scene1 = LoadSceneFromFile("res/scenes/scene1.txt");
 
