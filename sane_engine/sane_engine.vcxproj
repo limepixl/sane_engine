@@ -85,6 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\thirdparty\glad\glad.c" />
+    <ClCompile Include="src\Camera\camera.cpp" />
     <ClCompile Include="src\Display\display.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh\mesh.cpp" />
@@ -93,6 +94,7 @@
     <ClCompile Include="src\Texture\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Camera\camera.h" />
     <ClInclude Include="src\Display\display.h" />
     <ClInclude Include="src\Mesh\mesh.h" />
     <ClInclude Include="src\ResManagement\resource_management.h" />

@@ -8,7 +8,7 @@ uniform sampler2D tex;
 
 void main()
 {
-	vec3 light = vec3(5.0, 0.0, 0.0);
+	vec3 light = vec3(-5.0, 0.0, 0.0);
 	float diffuse = dot(normal, normalize(light - FragPos));
 
 	color = max(diffuse, 0.1) * texture(tex, texCoords);
