@@ -1,0 +1,10 @@
+models
+chair.obj
+
+textures
+chair-diffuse.png
+chair-occlusionRoughnessMetallic.png
+
+entities
+0 0 1 0.0 0.0 0.0 0.0 0.0 0.0 1.0 1.0 1.0 ;
+#

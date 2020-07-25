@@ -16,7 +16,7 @@ int main()
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)display.width / (float)display.height, 0.1f, 1000.0f);
 	glUniformMatrix4fv(shader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
 
-	Scene scene1 = LoadSceneFromFile("res/scenes/scene1.txt");
+	Scene scene1 = LoadSceneFromFile("res/scenes/scene2.txt");
 
 	while(!glfwWindowShouldClose(display.window))
 	{
@@ -24,8 +24,10 @@ int main()
 
 		ProcessInput(display, camera);
 
+		// Update camera uniforms
 		glm::mat4 view = GetViewMatrix(camera);
 		glUniformMatrix4fv(shader.locations["view"], 1, GL_FALSE, &view[0][0]);
+		glUniform3fv(shader.locations["cameraPos"], 1, &camera.position[0]);
 
 		DrawScene(scene1, shader);
 

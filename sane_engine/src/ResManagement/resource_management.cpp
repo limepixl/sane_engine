@@ -31,7 +31,11 @@ Texture LoadTextureFromFile(const char* path, unsigned int index)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        if(channels == 3)
+        if(channels == 1)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, data);
+        else if(channels == 2)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, width, height, 0, GL_RG, GL_UNSIGNED_BYTE, data);
+        else if(channels == 3)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         else if(channels == 4)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -302,7 +306,9 @@ Scene LoadSceneFromFile(const char* path)
             {
                 unsigned int modelIndex = stoi(token);
                 rawScene >> token;
-                unsigned int textureIndex = stoi(token);
+                unsigned int diffuseIndex = stoi(token);
+                rawScene >> token;
+                unsigned int specularIndex = stoi(token);
 
                 std::vector<float> coordinates;
                 while(rawScene >> token && token != ";")
@@ -312,7 +318,7 @@ Scene LoadSceneFromFile(const char* path)
                 glm::vec3 rot(coordinates[3], coordinates[4], coordinates[5]);
                 glm::vec3 scale(coordinates[6], coordinates[7], coordinates[8]);
 
-                entities.push_back({ modelIndex, textureIndex, pos, rot, scale });
+                entities.push_back({ modelIndex, diffuseIndex, specularIndex, pos, rot, scale });
             }
             break;
         }

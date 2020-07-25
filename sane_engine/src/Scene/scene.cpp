@@ -19,8 +19,10 @@ void DrawScene(Scene& scene, Shader& shader)
 		model = glm::scale(model, e.scale);
 		glUniformMatrix4fv(shader.locations["model"], 1, GL_FALSE, &model[0][0]);
 
-		glUniform1i(shader.locations["tex"], e.textureIndex);
-		BindTexture(scene.textures[e.textureIndex]);
+		glUniform1i(shader.locations["diffusetex"], e.diffuseIndex);
+		BindTexture(scene.textures[e.diffuseIndex]);
+		glUniform1i(shader.locations["speculartex"], e.specularIndex);
+		BindTexture(scene.textures[e.specularIndex]);
 		DrawMesh(scene.meshes[e.meshIndex]);
 	}
 }

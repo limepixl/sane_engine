@@ -6,7 +6,7 @@
 
 struct Entity
 {
-	unsigned int meshIndex, textureIndex;
+	unsigned int meshIndex, diffuseIndex, specularIndex;
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
