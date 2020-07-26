@@ -285,12 +285,16 @@ Scene LoadSceneFromFile(const char* path)
 
         if(!strcmp(token, "entities"))
         {
-            unsigned int modelIndex, diffuseIndex, specularIndex;
+            while(true)
+            {
+                unsigned int modelIndex, diffuseIndex, specularIndex;
 
-            glm::vec3 pos; glm::vec3 rot; glm::vec3 scale;
-            fscanf(rawScene, "%d %d %d %f %f %f %f %f %f %f %f %f ;\n", &modelIndex, &diffuseIndex, &specularIndex, &pos.x, &pos.y, &pos.z, &rot.x, &rot.y, &rot.z, &scale.x, &scale.y, &scale.z);
+                glm::vec3 pos; glm::vec3 rot; glm::vec3 scale;
+                if(fscanf(rawScene, "%d %d %d %f %f %f %f %f %f %f %f %f ;\n", &modelIndex, &diffuseIndex, &specularIndex, &pos.x, &pos.y, &pos.z, &rot.x, &rot.y, &rot.z, &scale.x, &scale.y, &scale.z) == EOF)
+                    break;
 
-            entities.push_back({ modelIndex, diffuseIndex, specularIndex, pos, rot, scale });
+                entities.push_back({ modelIndex, diffuseIndex, specularIndex, pos, rot, scale });
+            }
         }
     }
 
