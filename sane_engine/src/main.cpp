@@ -13,7 +13,7 @@ int main()
 
 	Camera camera{ {0.0f, 0.0f, 2.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, 0.0f, -90.0f };
 
-	glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)display.width / (float)display.height, 0.1f, 1000.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)display.width / (float)display.height, 0.01f, 1000.0f);
 	glUniformMatrix4fv(shader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
 
 	Scene scene1 = LoadSceneFromFile("res/scenes/scene2.txt");
