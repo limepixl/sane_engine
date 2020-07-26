@@ -6,10 +6,29 @@
 #include <vector>
 #include <unordered_map>
 
+#include <Windows.h>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-// GLOBAL TODO: Clean up file reading code
+// https://stackoverflow.com/a/8991228
+__int64 GetFileSize(const char* name)
+{
+    HANDLE hFile = CreateFile(name, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if(hFile == INVALID_HANDLE_VALUE)
+        return -1; // error condition, could call GetLastError to find out more
+
+    LARGE_INTEGER size;
+    if(!GetFileSizeEx(hFile, &size))
+    {
+        CloseHandle(hFile);
+        return -1; // error condition, could call GetLastError to find out more
+    }
+
+    CloseHandle(hFile);
+    return size.QuadPart;
+}
+
 
 Texture LoadTextureFromFile(const char* path, unsigned int index)
 {
@@ -59,31 +78,27 @@ Texture LoadTextureFromFile(const char* path, unsigned int index)
 Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
     // Load files into memory
-    std::ifstream vsRaw(vertexShaderPath);
-    if(!vsRaw.is_open())
+    FILE* vsRaw = fopen(vertexShaderPath, "r");
+    if(!vsRaw)
         printf("Failed to open file at path: %s\n", vertexShaderPath);
 
-    std::stringstream vsStream;
-    vsStream << vsRaw.rdbuf();
-    vsRaw.close();
+    long vsSize = (long)GetFileSize(vertexShaderPath);
+    char* vsBuffer = new char[vsSize];
+    fread(vsBuffer, 1, vsSize, vsRaw);
+    rewind(vsRaw);
 
-    std::string vsString = vsStream.str();
-    const char* vsSource = vsString.c_str();
-
-    std::ifstream fsRaw(fragmentShaderPath);
-    if(!fsRaw.is_open())
+    FILE* fsRaw = fopen(fragmentShaderPath, "r");
+    if(!fsRaw)
         printf("Failed to open file at path: %s\n", fragmentShaderPath);
 
-    std::stringstream fsStream;
-    fsStream << fsRaw.rdbuf();
-    fsRaw.close();
-
-    std::string fsString = fsStream.str();
-    const char* fsSource = fsString.c_str();
+    long fsSize = (long)GetFileSize(fragmentShaderPath);
+    char* fsBuffer = new char[fsSize];
+    fread(fsBuffer, 1, fsSize, fsRaw);
+    rewind(fsRaw);
 
     // Create vertex shader object
     GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex, 1, &vsSource, 0);
+    glShaderSource(vertex, 1, &vsBuffer, 0);
     glCompileShader(vertex);
 
     // Check compilation errors
@@ -99,7 +114,7 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
 
     // Create fragment shader object
     GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, &fsSource, 0);
+    glShaderSource(fragment, 1, &fsBuffer, 0);
     glCompileShader(fragment);
 
     // Check compilation errors
@@ -121,24 +136,26 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     std::unordered_map<std::string, int> uniforms;
 
     // Go through shader source and find uniform names
-    std::string tokenv, tokenf;
-    while(vsStream >> tokenv || fsStream >> tokenf)
+    char buffer[100];
+    while(fscanf(vsRaw, "%s", buffer) != EOF)
     {
-        if(tokenv == "uniform")
+        if(!strcmp(buffer, "uniform"))
         {
-            vsStream >> tokenv;
-            vsStream >> tokenv; // Contains the name of the uniform
-
-            uniforms[std::string(tokenv.begin(), tokenv.end() - 1)] = 0;
+            fscanf(vsRaw, "%s %s", buffer, buffer);
+            buffer[strlen(buffer) - 1] = '\0';
+            
+            uniforms[std::string(buffer)] = 0;
         }
+    }
 
-        if(tokenf == "uniform")
+    while(fscanf(fsRaw, "%s", buffer) != EOF)
+    {
+        if(!strcmp(buffer, "uniform"))
         {
-            fsStream >> tokenf;
-            fsStream >> tokenf; // Contains the name of the uniform
+            fscanf(fsRaw, "%s %s", buffer, buffer);
+            buffer[strlen(buffer) - 1] = '\0';
 
-            // I remove the last char because it's ';'
-            uniforms[std::string(tokenf.begin(), tokenf.end() - 1)] = 0;
+            uniforms[std::string(buffer)] = 0;
         }
     }
 
@@ -152,6 +169,11 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     glDetachShader(ID, fragment);
     glDeleteShader(vertex);
     glDeleteShader(fragment);
+
+    fclose(vsRaw);
+    fclose(fsRaw);
+    delete[] vsBuffer;
+    delete[] fsBuffer;
 
     return { ID, uniforms };
 }
