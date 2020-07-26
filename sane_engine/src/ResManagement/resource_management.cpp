@@ -6,29 +6,8 @@
 #include <vector>
 #include <unordered_map>
 
-#include <Windows.h>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-
-// https://stackoverflow.com/a/8991228
-__int64 GetFileSize(const char* name)
-{
-    HANDLE hFile = CreateFile(name, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    if(hFile == INVALID_HANDLE_VALUE)
-        return -1; // error condition, could call GetLastError to find out more
-
-    LARGE_INTEGER size;
-    if(!GetFileSizeEx(hFile, &size))
-    {
-        CloseHandle(hFile);
-        return -1; // error condition, could call GetLastError to find out more
-    }
-
-    CloseHandle(hFile);
-    return size.QuadPart;
-}
-
 
 Texture LoadTextureFromFile(const char* path, unsigned int index)
 {
@@ -78,22 +57,30 @@ Texture LoadTextureFromFile(const char* path, unsigned int index)
 Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
     // Load files into memory
-    FILE* vsRaw = fopen(vertexShaderPath, "r");
+    FILE* vsRaw = fopen(vertexShaderPath, "rb");
     if(!vsRaw)
         printf("Failed to open file at path: %s\n", vertexShaderPath);
 
-    long vsSize = (long)GetFileSize(vertexShaderPath);
-    char* vsBuffer = new char[vsSize];
-    fread(vsBuffer, 1, vsSize, vsRaw);
+    fseek(vsRaw, 0, SEEK_END);
+    long size = ftell(vsRaw);
     rewind(vsRaw);
 
-    FILE* fsRaw = fopen(fragmentShaderPath, "r");
+    char* vsBuffer = new char[size + 1];
+    fread(vsBuffer, 1, size, vsRaw);
+    vsBuffer[size] = '\0';
+    rewind(vsRaw);
+
+    FILE* fsRaw = fopen(fragmentShaderPath, "rb");
     if(!fsRaw)
         printf("Failed to open file at path: %s\n", fragmentShaderPath);
 
-    long fsSize = (long)GetFileSize(fragmentShaderPath);
-    char* fsBuffer = new char[fsSize];
-    fread(fsBuffer, 1, fsSize, fsRaw);
+    fseek(fsRaw, 0, SEEK_END);
+    size = ftell(fsRaw);
+    rewind(fsRaw);
+
+    char* fsBuffer = new char[size + 1];
+    fread(fsBuffer, 1, size, fsRaw);
+    fsBuffer[size] = '\0';
     rewind(fsRaw);
 
     // Create vertex shader object
