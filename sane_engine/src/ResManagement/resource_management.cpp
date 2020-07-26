@@ -165,33 +165,11 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     return { ID, uniforms };
 }
 
-std::vector<unsigned int> stripFaceDataFromToken(std::string& token)
-{
-    std::vector<unsigned int> indices;
-
-    int lastChar = -1;
-    for(size_t i = 0; i < token.size(); i++)
-    {
-        if(token[i] == '/')
-        {
-            indices.push_back((unsigned int)std::atoi(std::string(token.begin() + size_t(lastChar + 1), token.begin() + i).c_str()));
-            lastChar = (int)i;
-        }
-
-        if(i == token.size() - 1)
-        {
-            indices.push_back((unsigned int)std::atoi(std::string(token.begin() + size_t(lastChar + 1), token.end()).c_str()));
-        }
-    }
-
-    return indices;
-}
-
 // TODO: Create an indexed version of this
 Mesh LoadMeshFromOBJ(const char* path)
 {
-    std::ifstream objRaw(path);
-    if(!objRaw.is_open())
+    FILE* objRaw = fopen(path, "r");
+    if(!objRaw)
     {
         printf("Failed to open OBJ file at path: %s\n", path);
         return {};
@@ -205,57 +183,55 @@ Mesh LoadMeshFromOBJ(const char* path)
     std::vector<unsigned int> textureIndices;
     std::vector<unsigned int> normalIndices;
 
-    std::string token;
-    while(objRaw >> token)
+    char buffer[100];
+    while(fscanf(objRaw, "%s ", buffer) != EOF)
     {
-        if(token == "v")
+        if(!strcmp(buffer, "v"))
         {
-            std::string x, y, z;
-            objRaw >> x >> y >> z;
+            float x, y, z;
+            fscanf(objRaw, "%f %f %f\n", &x, &y, &z);
 
-            vertices.push_back((float)std::stof(x));
-            vertices.push_back((float)std::stof(y));
-            vertices.push_back((float)std::stof(z));
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
         }
-        else if(token == "vt")
+        else if(!strcmp(buffer, "vt"))
         {
-            std::string u, v;
-            objRaw >> u >> v;
+            float u, v;
+            fscanf(objRaw, "%f %f\n", &u, &v);
 
-            uvs.push_back((float)std::stof(u));
-            uvs.push_back((float)std::stof(v));
+            uvs.push_back(u);
+            uvs.push_back(v);
         }
-        else if(token == "vn")
+        else if(!strcmp(buffer, "vn"))
         {
-            std::string x, y, z;
-            objRaw >> x >> y >> z;
+            float x, y, z;
+            fscanf(objRaw, "%f %f %f\n", &x, &y, &z);
 
-            normals.push_back((float)std::stof(x));
-            normals.push_back((float)std::stof(y));
-            normals.push_back((float)std::stof(z));
+            normals.push_back(x);
+            normals.push_back(y);
+            normals.push_back(z);
         }
-        else if(token == "f")
+        else if(!strcmp(buffer, "f"))
         {
-            std::string first, second, third;
-            objRaw >> first >> second >> third;
+            int v1, v2, v3, t1, t2, t3, n1, n2, n3;
+            fscanf(objRaw, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);
 
-            std::vector<unsigned int> firstVertexData = stripFaceDataFromToken(first);
-            std::vector<unsigned int> secondVertexData = stripFaceDataFromToken(second);
-            std::vector<unsigned int> thirdVertexData = stripFaceDataFromToken(third);
+            vertexIndices.push_back(v1 - 1);
+            vertexIndices.push_back(v2 - 1);
+            vertexIndices.push_back(v3 - 1);
 
-            vertexIndices.push_back(firstVertexData[0] - 1);
-            vertexIndices.push_back(secondVertexData[0] - 1);
-            vertexIndices.push_back(thirdVertexData[0] - 1);
+            textureIndices.push_back(t1 - 1);
+            textureIndices.push_back(t2 - 1);
+            textureIndices.push_back(t3 - 1);
 
-            textureIndices.push_back(firstVertexData[1] - 1);
-            textureIndices.push_back(secondVertexData[1] - 1);
-            textureIndices.push_back(thirdVertexData[1] - 1);
-
-            normalIndices.push_back(firstVertexData[2] - 1);
-            normalIndices.push_back(secondVertexData[2] - 1);
-            normalIndices.push_back(thirdVertexData[2] - 1);
+            normalIndices.push_back(n1 - 1);
+            normalIndices.push_back(n2 - 1);
+            normalIndices.push_back(n3 - 1);
         }
     }
+
+    fclose(objRaw);
 
     std::vector<float> finalVertices;
     std::vector<float> finalUVs;
