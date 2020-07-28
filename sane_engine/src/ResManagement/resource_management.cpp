@@ -1,8 +1,6 @@
 #include "resource_management.h"
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
-#include <sstream>
 #include <vector>
 #include <unordered_map>
 
@@ -259,57 +257,48 @@ Scene LoadSceneFromFile(const char* path)
     std::vector<Texture> textures;
     std::vector<Entity> entities;
     
-    std::ifstream rawScene(path);
-    if(!rawScene.is_open())
+    FILE* rawScene = fopen(path, "r");
+    if(!rawScene)
         printf("Failed to open scene file at path: %s\n", path);
 
-    std::string token;
-    while(rawScene >> token)
+    char token[100];;
+    while(fscanf(rawScene, "%s", token) != EOF)
     {
-        if(token == "models")
+        if(!strcmp(token, "models"))
         {
-            while(rawScene >> token && token != "textures")
+            while(fscanf(rawScene, "%s\n", token) != EOF && strcmp(token, "textures"))
             {
-                token = "res/models/" + token;
-                Mesh tmp = LoadMeshFromOBJ(token.c_str());
+                char prepend[100] = "res/models/";
+                Mesh tmp = LoadMeshFromOBJ(strcat(prepend, token));
                 meshes.push_back(tmp);
             }
         } 
 
-        if(token == "textures")
+        if(!strcmp(token, "textures"))
         {
-            while(rawScene >> token && token != "entities")
+            while(fscanf(rawScene, "%s", token) != EOF && strcmp(token, "entities"))
             {
-                token = "res/image/" + token;
-                textures.push_back(LoadTextureFromFile(token.c_str(), (int)textures.size()));
+                char prepend[100] = "res/image/";
+                textures.push_back(LoadTextureFromFile(strcat(prepend, token), (int)textures.size()));
             }
         }
 
-        if(token == "entities")
+        if(!strcmp(token, "entities"))
         {
-            while(rawScene >> token && token != "#")
+            while(true)
             {
-                unsigned int modelIndex = stoi(token);
-                rawScene >> token;
-                unsigned int diffuseIndex = stoi(token);
-                rawScene >> token;
-                unsigned int specularIndex = stoi(token);
+                unsigned int modelIndex, diffuseIndex, specularIndex;
 
-                std::vector<float> coordinates;
-                while(rawScene >> token && token != ";")
-                    coordinates.push_back(std::stof(token));
-
-                glm::vec3 pos(coordinates[0], coordinates[1], coordinates[2]);
-                glm::vec3 rot(coordinates[3], coordinates[4], coordinates[5]);
-                glm::vec3 scale(coordinates[6], coordinates[7], coordinates[8]);
+                glm::vec3 pos; glm::vec3 rot; glm::vec3 scale;
+                if(fscanf(rawScene, "%d %d %d %f %f %f %f %f %f %f %f %f ;\n", &modelIndex, &diffuseIndex, &specularIndex, &pos.x, &pos.y, &pos.z, &rot.x, &rot.y, &rot.z, &scale.x, &scale.y, &scale.z) == EOF)
+                    break;
 
                 entities.push_back({ modelIndex, diffuseIndex, specularIndex, pos, rot, scale });
             }
-            break;
         }
     }
 
-    rawScene.close();
+    fclose(rawScene);
     return { meshes, textures, entities };
 }
 

@@ -1,10 +1,12 @@
 models
 chair.obj
+dragon.obj
 
 textures
 chair-diffuse.png
 chair-occlusionRoughnessMetallic.png
+dragon_texture_color.png
 
 entities
 0 0 1 0.0 0.0 0.0 0.0 0.0 0.0 1.0 1.0 1.0 ;
-#
+1 2 0 1.0 0.0 0.0 0.0 0.0 0.0 1.0 1.0 1.0 ;
