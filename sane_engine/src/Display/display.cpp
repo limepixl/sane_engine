@@ -1,5 +1,6 @@
 #include "display.h"
 #include <Camera/camera.h>
+#include <cstring>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -40,15 +41,13 @@ Display CreateDisplay(int width, int height, const char* title)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	return {width, height, window, 0.0f, 0.0f};
+	Display result = {"", width, height, window, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0};
+	strcpy(result.title, title);
+	return result;
 }
 
 void ProcessInput(Display& display, Camera& camera)
 {
-	float currentFrame = (float)glfwGetTime();
-	display.deltaTime = currentFrame - display.lastFrame;
-	display.lastFrame = currentFrame;
-
 	float cameraSpeed = 1.0f * display.deltaTime;
 	if(glfwGetKey(display.window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.position += cameraSpeed * camera.forward;
@@ -78,4 +77,27 @@ void ProcessInput(Display& display, Camera& camera)
 	camera.yaw += xoffset;
 	camera.pitch += yoffset;
 	UpdateVectors(camera);
+}
+
+// TODO: Wow, this is ugly. :/
+void DeltaTimeCalc(Display& display)
+{
+	float currentFrame = (float)glfwGetTime();
+	display.deltaTime = currentFrame - display.lastFrame;
+	display.lastFrame = currentFrame;
+
+	float delta = currentFrame - display.lastTime;
+	display.numFrames++;
+	if(delta >= 1.0f)
+	{
+		double frameTime = 1000.0 / (double)display.numFrames;
+		double fps = (double)display.numFrames / delta;
+
+		char buffer[100];
+		sprintf(buffer, "%s | FPS: %.2lf | Frame Time: %.3lf", display.title, fps, frameTime);
+		glfwSetWindowTitle(display.window, buffer);
+
+		display.numFrames = 0;
+		display.lastTime = currentFrame;
+	}
 }
