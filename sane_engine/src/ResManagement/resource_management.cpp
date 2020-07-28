@@ -251,6 +251,21 @@ Mesh LoadMeshFromOBJ(const char* path)
     return GenerateMesh(finalVertices.data(), (int)finalVertices.size(), finalUVs.data(), (int)finalUVs.size(), finalNormals.data(), (int)finalNormals.size());
 }
 
+// Simple bubble sort based on the mesh index
+void SortEntitiesByMesh(std::vector<Entity>& entities)
+{
+    for(int i = 0; i < entities.size(); i++)
+        for(int j = 0; j < entities.size() - 1 - i; i++)
+        {
+            if(entities[j].meshIndex > entities[j + 1].meshIndex)
+            {
+                Entity tmp = entities[j];
+                entities[j] = entities[j + 1];
+                entities[j + 1] = tmp;
+            }
+        }
+}
+
 Scene LoadSceneFromFile(const char* path)
 {
     std::vector<Mesh> meshes;
@@ -299,6 +314,9 @@ Scene LoadSceneFromFile(const char* path)
     }
 
     fclose(rawScene);
+
+    SortEntitiesByMesh(entities);
+
     return { meshes, textures, entities };
 }
 

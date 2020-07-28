@@ -3,12 +3,17 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-// TODO: have some sort of cache. 
-// For example, if the same mesh is being drawn
-// for the next entity and the current entity,
-// the next entity shouldn't bind the mesh.
+// NOTE: Currently the scene is being drawn
+// one mesh at a time. For example, if there
+// are 3 dragons, 2 chairs and 5 teapots in
+// the scene, all entities that use a mesh
+// will be drawn before the next mesh is bound.
+//
+// TODO: Find a more efficient way to do this
+// Look into batching?
 void DrawScene(Scene& scene, Shader& shader)
 {
+	int lastMeshIndex = -1;
 	for(auto& e : scene.entities)
 	{
 		glm::mat4 model(1.0f);
@@ -23,6 +28,16 @@ void DrawScene(Scene& scene, Shader& shader)
 		BindTexture(scene.textures[e.diffuseIndex]);
 		glUniform1i(shader.locations["speculartex"], e.specularIndex);
 		BindTexture(scene.textures[e.specularIndex]);
-		DrawMesh(scene.meshes[e.meshIndex]);
+
+		Mesh& mesh = scene.meshes[e.meshIndex];
+		if(lastMeshIndex != (int)e.meshIndex)
+		{
+			glBindVertexArray(mesh.VAO);
+			lastMeshIndex = e.meshIndex;
+		}
+		glDrawArrays(GL_TRIANGLES, 0, mesh.numVertices);
 	}
+
+	UnbindTexture();
+	glBindVertexArray(0);
 }
