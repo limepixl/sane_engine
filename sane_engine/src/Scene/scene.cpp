@@ -31,6 +31,9 @@ void DrawScene(Scene& scene, Shader& shader)
 
 		for(size_t i = 0; i < scene.lights.size(); i++)
 		{
+			// NOTE: The shader loading process doesn't account for uniform arrays so I can't use the uniform unordered map
+			// for grabbing the pre-found uniform locations. 
+			// TODO: Uniform buffers
 			int loc = glGetUniformLocation(shader.ID, (const GLchar*)std::string("lightPositions[" + std::to_string(i) + "]").c_str());
 			glUniform3fv(loc, 1, &scene.lights[i][0]);
 		}
