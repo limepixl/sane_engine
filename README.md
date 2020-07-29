@@ -1,7 +1,7 @@
 TODO:
+* Visible lights
 * Batching
 * Instanced drawing
-* Visible lights
 * Move over to own math lib (especially for matrix transformations)
 * Experiment with quaternions
 * ~~Custom scene format that describes models lights and positions in the world~~

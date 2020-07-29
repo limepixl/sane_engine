@@ -8,15 +8,14 @@ int main()
 {
 	Display display = CreateDisplay(1280, 720, "Sane Engine");
 
-	Shader shader = LoadShaderFromFile("res/shaders/normalsvs.glsl", "res/shaders/normalsfs.glsl");
-	glUseProgram(shader.ID);
-
 	Camera camera{ {0.0f, 0.0f, 2.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, 0.0f, -90.0f };
 
-	glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)display.width / (float)display.height, 0.01f, 1000.0f);
-	glUniformMatrix4fv(shader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
+	Shader lightShader = LoadShaderFromFile("res/shaders/light/lightvs.glsl", "res/shaders/light/lightfs.glsl");
+	Mesh lightMesh = LoadMeshFromOBJ("res/models/cube.obj");
 
-	Scene scene1 = LoadSceneFromFile("res/scenes/scene2.txt");
+	Shader shader = LoadShaderFromFile("res/shaders/normals/normalsvs.glsl", "res/shaders/normals/normalsfs.glsl");
+
+	Scene scene = LoadSceneFromFile("res/scenes/scene.txt");
 
 	while(!glfwWindowShouldClose(display.window))
 	{
@@ -25,21 +24,36 @@ int main()
 		DeltaTimeCalc(display);
 		ProcessInput(display, camera);
 
+		glUseProgram(shader.ID);
+
+		glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)display.width / (float)display.height, 0.01f, 1000.0f);
+		glUniformMatrix4fv(shader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
+
 		// Update camera uniforms
 		glm::mat4 view = GetViewMatrix(camera);
 		glUniformMatrix4fv(shader.locations["view"], 1, GL_FALSE, &view[0][0]);
 		glUniform3fv(shader.locations["cameraPos"], 1, &camera.position[0]);
 
-		DrawScene(scene1, shader);
+		DrawScene(scene, shader);
+
+		glUseProgram(lightShader.ID);
+		glUniformMatrix4fv(lightShader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
+		glUniformMatrix4fv(lightShader.locations["view"], 1, GL_FALSE, &view[0][0]);
+
+		glm::mat4 model(1.0);
+		model = glm::translate(model, scene.lightPos);
+		glUniformMatrix4fv(lightShader.locations["model"], 1, GL_FALSE, &model[0][0]);
+
+		DrawMesh(lightMesh, false);
 
 		glfwSwapBuffers(display.window);
 		glfwPollEvents();
 	}
 
 	// Clean up
-	for(auto& m : scene1.meshes)
+	for(auto& m : scene.meshes)
 		Clean(m);
-	for(auto& t : scene1.textures)
+	for(auto& t : scene.textures)
 		Clean(t);
 
 	glfwTerminate();

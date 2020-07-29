@@ -29,6 +29,8 @@ void DrawScene(Scene& scene, Shader& shader)
 		glUniform1i(shader.locations["speculartex"], e.specularIndex);
 		BindTexture(scene.textures[e.specularIndex]);
 
+		glUniform3fv(shader.locations["lightPos"], 1, &scene.lightPos[0]);
+
 		Mesh& mesh = scene.meshes[e.meshIndex];
 		if(lastMeshIndex != (int)e.meshIndex)
 		{

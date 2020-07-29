@@ -17,6 +17,7 @@ struct Scene
 	std::vector<Mesh> meshes;
 	std::vector<Texture> textures;
 	std::vector<Entity> entities;
+	glm::vec3 lightPos;
 };
 
 void DrawScene(Scene& scene, struct Shader& shader);
