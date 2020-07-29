@@ -46,6 +46,8 @@ Display CreateDisplay(int width, int height, const char* title)
 	return result;
 }
 
+// NOTE: Currently moves twice as fast when
+// moving diagonally.
 void ProcessInput(Display& display, Camera& camera)
 {
 	float cameraSpeed = 1.0f * display.deltaTime;
@@ -79,7 +81,6 @@ void ProcessInput(Display& display, Camera& camera)
 	UpdateVectors(camera);
 }
 
-// TODO: Wow, this is ugly. :/
 void DeltaTimeCalc(Display& display)
 {
 	float currentFrame = (float)glfwGetTime();

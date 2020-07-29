@@ -49,7 +49,7 @@ Texture LoadTextureFromFile(const char* path, unsigned int index)
     }
 
     printf("Failed to load texture from image at path: %s\n", path);
-    return {};
+    exit(-1);
 }
 
 Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath)
@@ -254,8 +254,8 @@ Mesh LoadMeshFromOBJ(const char* path)
 // Simple bubble sort based on the mesh index
 void SortEntitiesByMesh(std::vector<Entity>& entities)
 {
-    for(int i = 0; i < entities.size(); i++)
-        for(int j = 0; j < entities.size() - 1 - i; i++)
+    for(size_t i = 0; i < entities.size(); i++)
+        for(size_t j = 0; j < entities.size() - 1 - i; i++)
         {
             if(entities[j].meshIndex > entities[j + 1].meshIndex)
             {

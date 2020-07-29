@@ -32,10 +32,13 @@ void DrawScene(Scene& scene, Shader& shader)
 		Mesh& mesh = scene.meshes[e.meshIndex];
 		if(lastMeshIndex != (int)e.meshIndex)
 		{
-			glBindVertexArray(mesh.VAO);
+			DrawMesh(mesh, false);
 			lastMeshIndex = e.meshIndex;
+
+			continue;
 		}
-		glDrawArrays(GL_TRIANGLES, 0, mesh.numVertices);
+		
+		DrawMesh(mesh, true);
 	}
 
 	UnbindTexture();

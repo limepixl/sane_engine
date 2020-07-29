@@ -43,11 +43,11 @@ Mesh GenerateMesh(float* vertices, int numVertices, float* texCoords, int numTex
 	return { VAO, VBO1, VBO2, VBO3, numVertices };
 }
 
-void DrawMesh(Mesh& mesh)
+void DrawMesh(Mesh& mesh, bool sameModel)
 {
-	glBindVertexArray(mesh.VAO);
+	if(!sameModel)
+		glBindVertexArray(mesh.VAO);
 	glDrawArrays(GL_TRIANGLES, 0, mesh.numVertices);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Clean(Mesh& m)
