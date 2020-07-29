@@ -271,45 +271,50 @@ Scene LoadSceneFromFile(const char* path)
     std::vector<Mesh> meshes;
     std::vector<Texture> textures;
     std::vector<Entity> entities;
+    glm::vec3 lightPos(0.0);
     
     FILE* rawScene = fopen(path, "r");
     if(!rawScene)
         printf("Failed to open scene file at path: %s\n", path);
 
     char token[100];;
-    while(fscanf(rawScene, "%s", token) != EOF)
+    while(true)
     {
-        if(!strcmp(token, "models"))
+        if(fscanf(rawScene, "%s", token) == EOF)
+            break;
+
+        if(!strcmp(token, "m"))
         {
-            while(fscanf(rawScene, "%s\n", token) != EOF && strcmp(token, "textures"))
-            {
-                char prepend[100] = "res/models/";
-                Mesh tmp = LoadMeshFromOBJ(strcat(prepend, token));
-                meshes.push_back(tmp);
-            }
+            fscanf(rawScene, "%s\n", token);
+            char prepend[100] = "res/models/";
+            Mesh tmp = LoadMeshFromOBJ(strcat(prepend, token));
+            meshes.push_back(tmp);
+            continue;
         } 
 
-        if(!strcmp(token, "textures"))
+        if(!strcmp(token, "t"))
         {
-            while(fscanf(rawScene, "%s", token) != EOF && strcmp(token, "entities"))
-            {
-                char prepend[100] = "res/image/";
-                textures.push_back(LoadTextureFromFile(strcat(prepend, token), (int)textures.size()));
-            }
+            fscanf(rawScene, "%s\n", token);
+            char prepend[100] = "res/image/";
+            textures.push_back(LoadTextureFromFile(strcat(prepend, token), (int)textures.size()));
+            continue;
         }
 
-        if(!strcmp(token, "entities"))
+        if(!strcmp(token, "e"))
         {
-            while(true)
-            {
-                unsigned int modelIndex, diffuseIndex, specularIndex;
+            unsigned int modelIndex, diffuseIndex, specularIndex;
 
-                glm::vec3 pos; glm::vec3 rot; glm::vec3 scale;
-                if(fscanf(rawScene, "%d %d %d %f %f %f %f %f %f %f %f %f ;\n", &modelIndex, &diffuseIndex, &specularIndex, &pos.x, &pos.y, &pos.z, &rot.x, &rot.y, &rot.z, &scale.x, &scale.y, &scale.z) == EOF)
-                    break;
+            glm::vec3 pos; glm::vec3 rot; glm::vec3 scale;
+            fscanf(rawScene, "%d %d %d %f %f %f %f %f %f %f %f %f ;\n", &modelIndex, &diffuseIndex, &specularIndex, &pos.x, &pos.y, &pos.z, &rot.x, &rot.y, &rot.z, &scale.x, &scale.y, &scale.z);
 
-                entities.push_back({ modelIndex, diffuseIndex, specularIndex, pos, rot, scale });
-            }
+            entities.push_back({ modelIndex, diffuseIndex, specularIndex, pos, rot, scale });
+            continue;
+        }
+
+        if(!strcmp(token, "l"))
+        {
+            fscanf(rawScene, "%f %f %f\n", &lightPos.x, &lightPos.y, &lightPos.z);
+            continue;
         }
     }
 
@@ -317,6 +322,6 @@ Scene LoadSceneFromFile(const char* path)
 
     SortEntitiesByMesh(entities);
 
-    return { meshes, textures, entities };
+    return { meshes, textures, entities, lightPos };
 }
 
