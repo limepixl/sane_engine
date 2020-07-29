@@ -78,7 +78,17 @@ void ProcessInput(Display& display, Camera& camera)
 
 	camera.yaw += xoffset;
 	camera.pitch += yoffset;
-	UpdateVectors(camera);
+	
+	// Fixes able to look upside down
+	if(camera.pitch > 89.0f)
+		camera.pitch = 89.0f;
+	if(camera.pitch < -89.0f)
+		camera.pitch = -89.0f;
+
+	camera.forward.x = cos(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
+	camera.forward.y = sin(glm::radians(camera.pitch));
+	camera.forward.z = sin(glm::radians(camera.yaw)) * cos(glm::radians(camera.pitch));
+	camera.forward = glm::normalize(camera.forward);
 }
 
 void DeltaTimeCalc(Display& display)

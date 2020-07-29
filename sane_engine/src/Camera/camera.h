@@ -13,4 +13,3 @@ struct Camera
 };
 
 glm::mat4 GetViewMatrix(Camera& camera);
-void UpdateVectors(Camera& camera);
