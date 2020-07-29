@@ -8,11 +8,11 @@ uniform sampler2D diffusetex;
 uniform sampler2D speculartex;
 
 uniform vec3 cameraPos;
+uniform vec3 lightPos;
 
 void main()
 {
-	vec3 light = vec3(5.0, 5.0, 5.0);
-	vec3 lightDir = normalize(light - FragPos);
+	vec3 lightDir = normalize(lightPos - FragPos);
 	vec3 reflectedDir = reflect(-lightDir, normal);
 
 	float diff = max(0.1, dot(normal, lightDir));
