@@ -29,7 +29,11 @@ void DrawScene(Scene& scene, Shader& shader)
 		glUniform1i(shader.locations["speculartex"], e.specularIndex);
 		BindTexture(scene.textures[e.specularIndex]);
 
-		glUniform3fv(shader.locations["lightPos"], 1, &scene.lightPos[0]);
+		for(size_t i = 0; i < scene.lights.size(); i++)
+		{
+			int loc = glGetUniformLocation(shader.ID, (const GLchar*)std::string("lightPositions[" + std::to_string(i) + "]").c_str());
+			glUniform3fv(loc, 1, &scene.lights[i][0]);
+		}
 
 		Mesh& mesh = scene.meshes[e.meshIndex];
 		if(lastMeshIndex != (int)e.meshIndex)
@@ -45,4 +49,18 @@ void DrawScene(Scene& scene, Shader& shader)
 
 	UnbindTexture();
 	glBindVertexArray(0);
+}
+
+void DrawLights(Scene& scene, Shader& shader, Mesh& mesh)
+{
+	bool drawnOnce = false;
+	for(auto& pos : scene.lights)
+	{
+		glm::mat4 model(1.0);
+		model = glm::translate(model, pos);
+		glUniformMatrix4fv(shader.locations["model"], 1, GL_FALSE, &model[0][0]);
+
+		DrawMesh(mesh, drawnOnce);
+		drawnOnce = true;
+	}
 }

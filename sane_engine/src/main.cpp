@@ -40,11 +40,7 @@ int main()
 		glUniformMatrix4fv(lightShader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
 		glUniformMatrix4fv(lightShader.locations["view"], 1, GL_FALSE, &view[0][0]);
 
-		glm::mat4 model(1.0);
-		model = glm::translate(model, scene.lightPos);
-		glUniformMatrix4fv(lightShader.locations["model"], 1, GL_FALSE, &model[0][0]);
-
-		DrawMesh(lightMesh, false);
+		DrawLights(scene, lightShader, lightMesh);
 
 		glfwSwapBuffers(display.window);
 		glfwPollEvents();

@@ -271,7 +271,7 @@ Scene LoadSceneFromFile(const char* path)
     std::vector<Mesh> meshes;
     std::vector<Texture> textures;
     std::vector<Entity> entities;
-    glm::vec3 lightPos(0.0);
+    std::vector<glm::vec3> lights;
     
     FILE* rawScene = fopen(path, "r");
     if(!rawScene)
@@ -313,7 +313,9 @@ Scene LoadSceneFromFile(const char* path)
 
         if(!strcmp(token, "l"))
         {
+            glm::vec3 lightPos;
             fscanf(rawScene, "%f %f %f\n", &lightPos.x, &lightPos.y, &lightPos.z);
+            lights.push_back(lightPos);
             continue;
         }
     }
@@ -322,6 +324,6 @@ Scene LoadSceneFromFile(const char* path)
 
     SortEntitiesByMesh(entities);
 
-    return { meshes, textures, entities, lightPos };
+    return { meshes, textures, entities, lights };
 }
 

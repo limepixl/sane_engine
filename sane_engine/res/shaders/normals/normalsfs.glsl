@@ -8,9 +8,11 @@ uniform sampler2D diffusetex;
 uniform sampler2D speculartex;
 
 uniform vec3 cameraPos;
-uniform vec3 lightPos;
 
-void main()
+#define MAX_LIGHTS 2
+uniform vec3 lightPositions[MAX_LIGHTS];
+
+vec3 CalcLight(vec3 lightPos, vec3 normal, vec3 FragPos, vec3 viewDir)
 {
 	vec3 lightDir = normalize(lightPos - FragPos);
 	vec3 reflectedDir = reflect(-lightDir, normal);
@@ -18,9 +20,19 @@ void main()
 	float diff = max(0.1, dot(normal, lightDir));
 	vec3 diffuse = texture(diffusetex, texCoords).xyz * diff;
 
-	vec3 viewDir = normalize(cameraPos - FragPos);
 	float spec = max(0.0, dot(viewDir, reflectedDir));
 	float specular = texture(speculartex, texCoords).b * spec;
 
-	color = vec4(diffuse * (1.0 + 3.0*specular), 1.0);
+	return diffuse * (1.0 + specular);
+}
+
+void main()
+{
+	vec3 viewDir = normalize(cameraPos - FragPos);
+	vec3 result = vec3(0.0);
+	
+	for(int i = 0; i < MAX_LIGHTS; i++)
+		result += CalcLight(lightPositions[i], normal, FragPos, viewDir);
+
+	color = vec4(result, 1.0);
 }
