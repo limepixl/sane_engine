@@ -84,7 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\thirdparty\glad\glad.c" />
+    <ClCompile Include="..\thirdparty\glad\src\glad.c" />
     <ClCompile Include="src\Camera\camera.cpp" />
     <ClCompile Include="src\Display\display.cpp" />
     <ClCompile Include="src\main.cpp" />
