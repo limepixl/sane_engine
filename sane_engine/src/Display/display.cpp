@@ -16,7 +16,7 @@ Display CreateDisplay(int width, int height, const char* title)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE); // TODO: Definitely doesn't work on Linux
 
 	// Create GLFW window
 	window = glfwCreateWindow(width, height, title, nullptr, nullptr);
@@ -104,7 +104,7 @@ void DeltaTimeCalc(Display& display)
 		double frameTime = 1000.0 / (double)display.numFrames;
 		double fps = (double)display.numFrames / delta;
 
-		char buffer[100];
+		char buffer[512];
 		sprintf(buffer, "%s | FPS: %.2lf | Frame Time: %.3lf", display.title, fps, frameTime);
 		glfwSetWindowTitle(display.window, buffer);
 
