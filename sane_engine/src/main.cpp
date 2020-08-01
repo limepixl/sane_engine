@@ -25,14 +25,15 @@ int main()
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 	// Generate a color buffer attachment for the FBO
+	GLuint FBOTextureIndex = (int)scene.textures.size();
 	GLuint textureColorBuffer;
 	glGenTextures(1, &textureColorBuffer);
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0 + FBOTextureIndex);
 	glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, display.width, display.height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
 
 	// Attach it to the FBO
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
@@ -90,8 +91,9 @@ int main()
 		glDisable(GL_DEPTH_TEST);
 		
 		glUseProgram(screenQuadShader.ID);
+		glUniform1i(screenQuadShader.locations["fbo"], FBOTextureIndex);
 
-		glActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0 + FBOTextureIndex);
 		glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
 
 		DrawMesh(screenQuadMesh, false);
