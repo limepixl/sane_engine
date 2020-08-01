@@ -40,9 +40,6 @@ Texture LoadTextureFromFile(const char* path, unsigned int index)
 
         glGenerateMipmap(ID);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-
         stbi_image_free(data);
 
         return { width, height, channels, ID, index };

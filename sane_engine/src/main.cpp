@@ -93,13 +93,7 @@ int main()
 		glUseProgram(screenQuadShader.ID);
 		glUniform1i(screenQuadShader.locations["fbo"], FBOTextureIndex);
 
-		glActiveTexture(GL_TEXTURE0 + FBOTextureIndex);
-		glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-
 		DrawMesh(screenQuadMesh, false);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindVertexArray(0);
 
 		glfwSwapBuffers(display.window);
 		glfwPollEvents();

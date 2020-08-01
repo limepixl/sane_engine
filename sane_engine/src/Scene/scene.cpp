@@ -25,9 +25,7 @@ void DrawScene(Scene& scene, Shader& shader)
 		glUniformMatrix4fv(shader.locations["model"], 1, GL_FALSE, &model[0][0]);
 
 		glUniform1i(shader.locations["diffusetex"], e.diffuseIndex);
-		BindTexture(scene.textures[e.diffuseIndex]);
 		glUniform1i(shader.locations["speculartex"], e.specularIndex);
-		BindTexture(scene.textures[e.specularIndex]);
 
 		for(size_t i = 0; i < scene.lights.size(); i++)
 		{
@@ -50,7 +48,6 @@ void DrawScene(Scene& scene, Shader& shader)
 		DrawMesh(mesh, true);
 	}
 
-	UnbindTexture();
 	glBindVertexArray(0);
 }
 
