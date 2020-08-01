@@ -43,6 +43,54 @@ Mesh GenerateMesh(float* vertices, int numVertices, float* texCoords, int numTex
 	return { VAO, VBO1, VBO2, VBO3, numVertices };
 }
 
+Mesh GenerateScreenQuad()
+{
+	float screenQuadVertices[]
+	{
+		-1.0f, -1.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		-1.0f, 1.0f, 0.0f,
+		-1.0f, -1.0f, 0.0f
+	};
+
+	float screenQuadUVs[]
+	{
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f
+	};
+
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	GLuint VBO1;
+	glGenBuffers(1, &VBO1);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), screenQuadVertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	GLuint VBO2;
+	glGenBuffers(1, &VBO2);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), screenQuadUVs, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	return { VAO, VBO1, VBO2, 0, 6 };
+}
+
 void DrawMesh(Mesh& mesh, bool sameModel)
 {
 	if(!sameModel)
