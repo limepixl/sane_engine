@@ -82,16 +82,7 @@ int main()
 		glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)display.width / (float)display.height, 0.01f, 1000.0f);
 		glm::mat4 nonTranslatedView = glm::mat4(glm::mat3(view));
 
-		// Firstly, draw the cubemap
-		glDepthMask(GL_FALSE);
-		glUseProgram(cubemapShader.ID);
-		glUniformMatrix4fv(cubemapShader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
-		glUniformMatrix4fv(cubemapShader.locations["view"], 1, GL_FALSE, &nonTranslatedView[0][0]);
-		glUniform1i(cubemapShader.locations["cubemap"], cubemap.index);
-		DrawMesh(cubemapMesh, false);
-		glDepthMask(GL_TRUE);
-
-		// Next, draw the whole scene
+		// Firstly, draw the whole scene
 		glUseProgram(shader.ID);
 		glUniformMatrix4fv(shader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
 		glUniformMatrix4fv(shader.locations["view"], 1, GL_FALSE, &view[0][0]);
@@ -103,6 +94,17 @@ int main()
 		glUniformMatrix4fv(lightShader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
 		glUniformMatrix4fv(lightShader.locations["view"], 1, GL_FALSE, &view[0][0]);
 		DrawLights(scene, lightShader, lightMesh);
+
+		// Lastly, draw the skybox wherever the background color is visible
+		glDepthMask(GL_FALSE);
+		glDepthFunc(GL_LEQUAL);
+		glUseProgram(cubemapShader.ID);
+		glUniformMatrix4fv(cubemapShader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
+		glUniformMatrix4fv(cubemapShader.locations["view"], 1, GL_FALSE, &nonTranslatedView[0][0]);
+		glUniform1i(cubemapShader.locations["cubemap"], cubemap.index);
+		DrawMesh(cubemapMesh, false);
+		glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LESS);
 
 		// Switch to default framebuffer object and draw the 
 		// other framebuffer object's color buffer onto this one
