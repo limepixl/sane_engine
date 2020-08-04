@@ -19,6 +19,19 @@ int main()
 	Shader screenQuadShader = LoadShaderFromFile("res/shaders/screenQuad/screenQuadvs.glsl", "res/shaders/screenQuad/screenQuadfs.glsl");
 	Mesh screenQuadMesh = GenerateScreenQuad();
 
+	std::string paths[] =
+	{
+		"res/skybox/sea/right.jpg",
+		"res/skybox/sea/left.jpg",
+		"res/skybox/sea/top.jpg",
+		"res/skybox/sea/bottom.jpg",
+		"res/skybox/sea/front.jpg",
+		"res/skybox/sea/back.jpg"
+	};
+	Texture cubemap = LoadCubemapFromFile(paths, 6, scene.textures.size() + 1);
+	Mesh cubemapMesh = GenerateCube();
+	Shader cubemapShader = LoadShaderFromFile("res/shaders/skybox/skyboxvs.glsl", "res/shaders/skybox/skyboxfs.glsl");
+
 	// Create framebuffer object
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
@@ -65,22 +78,30 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glUseProgram(shader.ID);
-
-		glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)display.width / (float)display.height, 0.01f, 1000.0f);
-		glUniformMatrix4fv(shader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
-
-		// Update camera uniforms
 		glm::mat4 view = GetViewMatrix(camera);
+		glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)display.width / (float)display.height, 0.01f, 1000.0f);
+		glm::mat4 nonTranslatedView = glm::mat4(glm::mat3(view));
+
+		// Firstly, draw the cubemap
+		glDepthMask(GL_FALSE);
+		glUseProgram(cubemapShader.ID);
+		glUniformMatrix4fv(cubemapShader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
+		glUniformMatrix4fv(cubemapShader.locations["view"], 1, GL_FALSE, &nonTranslatedView[0][0]);
+		glUniform1i(cubemapShader.locations["cubemap"], cubemap.index);
+		DrawMesh(cubemapMesh, false);
+		glDepthMask(GL_TRUE);
+
+		// Next, draw the whole scene
+		glUseProgram(shader.ID);
+		glUniformMatrix4fv(shader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
 		glUniformMatrix4fv(shader.locations["view"], 1, GL_FALSE, &view[0][0]);
 		glUniform3fv(shader.locations["cameraPos"], 1, &camera.position[0]);
-
 		DrawScene(scene, shader);
 
+		// Next, draw the lights as cubes
 		glUseProgram(lightShader.ID);
 		glUniformMatrix4fv(lightShader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
 		glUniformMatrix4fv(lightShader.locations["view"], 1, GL_FALSE, &view[0][0]);
-
 		DrawLights(scene, lightShader, lightMesh);
 
 		// Switch to default framebuffer object and draw the 

@@ -1,4 +1,5 @@
 TODO:
+* Have a global index count for textures because assigning random indices to them is hacky
 * Batching
 * Instanced drawing
 * Move over to own math lib (especially for matrix transformations)

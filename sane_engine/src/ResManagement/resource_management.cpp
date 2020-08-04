@@ -49,6 +49,43 @@ Texture LoadTextureFromFile(const char* path, unsigned int index)
     exit(-1);
 }
 
+Texture LoadCubemapFromFile(std::string* paths, int numStrings, unsigned int index)
+{
+    // Load image from file
+    stbi_set_flip_vertically_on_load(false);
+
+    GLuint ID;
+    glGenTextures(1, &ID);
+    glActiveTexture(GL_TEXTURE0 + index);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    int width, height, channels;
+    unsigned char* data;
+    for(int i = 0; i < 6; i++)
+    {
+        data = stbi_load(paths[i].c_str(), &width, &height, &channels, 0);
+        if(data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(ID);
+            stbi_image_free(data);
+        }
+        else
+        {
+            printf("Failed to load cubemap texture at path: %s\n", paths[i].c_str());
+            stbi_image_free(data);
+        }
+    }
+
+    return {0, 0, 3, ID, index};
+}
+
 Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
     // Load files into memory
