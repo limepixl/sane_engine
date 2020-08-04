@@ -28,7 +28,7 @@ int main()
 		"res/skybox/sea/front.jpg",
 		"res/skybox/sea/back.jpg"
 	};
-	Texture cubemap = LoadCubemapFromFile(paths, 6, scene.textures.size() + 1);
+	Texture cubemap = LoadCubemapFromFile(paths, 6, (int)(scene.textures.size() + 1));
 	Mesh cubemapMesh = GenerateCube();
 	Shader cubemapShader = LoadShaderFromFile("res/shaders/skybox/skyboxvs.glsl", "res/shaders/skybox/skyboxfs.glsl");
 
