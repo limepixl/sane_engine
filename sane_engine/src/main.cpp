@@ -7,15 +7,27 @@
 int main()
 {
 	Display display = CreateDisplay(1280, 720, "Sane Engine");
-
 	Camera camera{ {0.0f, 0.0f, 2.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, 0.0f, -90.0f };
 
+	// Shader and mesh used for drawing lights in the world
 	Shader lightShader = LoadShaderFromFile("res/shaders/light/lightvs.glsl", "res/shaders/light/lightfs.glsl");
 	Mesh lightMesh = LoadMeshFromOBJ("res/models/cube.obj");
 
+	// Shader and scene used for drawing everything else in the scene
 	Shader shader = LoadShaderFromFile("res/shaders/normals/normalsvs.glsl", "res/shaders/normals/normalsfs.glsl");
 	Scene scene = LoadSceneFromFile("res/scenes/scene.txt");
 
+	// NOTE: The shader loading process doesn't account for uniform arrays so I can't use the uniform unordered map
+	// for grabbing the pre-found uniform locations. 
+	char luString[50];
+	for(size_t i = 0; i < scene.lights.size(); i++)
+	{
+		sprintf(luString, "lightPositions[%d]", (int)i);
+		int loc = glGetUniformLocation(shader.ID, luString);
+		shader.locations[luString] = loc;
+	}
+
+	// Shader and mesh for the screen quad that is the canvas for the FBOs
 	Shader screenQuadShader = LoadShaderFromFile("res/shaders/screenQuad/screenQuadvs.glsl", "res/shaders/screenQuad/screenQuadfs.glsl");
 	Mesh screenQuadMesh = GenerateScreenQuad();
 
