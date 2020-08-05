@@ -6,5 +6,5 @@
 struct Shader
 {
 	GLuint ID;
-	std::unordered_map<std::string, int> locations;
+	std::unordered_map<std::string, GLint> locations;
 };

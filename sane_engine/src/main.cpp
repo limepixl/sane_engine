@@ -17,14 +17,11 @@ int main()
 	Shader shader = LoadShaderFromFile("res/shaders/normals/normalsvs.glsl", "res/shaders/normals/normalsfs.glsl");
 	Scene scene = LoadSceneFromFile("res/scenes/scene.txt");
 
-	// NOTE: The shader loading process doesn't account for uniform arrays so I can't use the uniform unordered map
-	// for grabbing the pre-found uniform locations. 
-	char luString[50];
+	// Pass light positions to main shader for light calculations
+	glUseProgram(shader.ID);
 	for(size_t i = 0; i < scene.lights.size(); i++)
 	{
-		sprintf(luString, "lightPositions[%d]", (int)i);
-		int loc = glGetUniformLocation(shader.ID, luString);
-		shader.locations[luString] = loc;
+		glUniform3fv(shader.locations["lightPositions[0]"] + (GLint)i, 1, &scene.lights[i][0]);
 	}
 
 	// Shader and mesh for the screen quad that is the canvas for the FBOs

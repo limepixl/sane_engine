@@ -154,37 +154,29 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     glAttachShader(ID, fragment);
     glLinkProgram(ID);
 
-    // Lookup map for uniform names
-    std::unordered_map<std::string, int> uniforms;
+    // Get uniform names and locations from program 
+    std::unordered_map<std::string, GLint> uniforms;
 
-    // Go through shader source and find uniform names
-    char buffer[100];
-    while(fscanf(vsRaw, "%s", buffer) != EOF)
+    int uniformCount = 0;
+    glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &uniformCount);
+
+    if(uniformCount)
     {
-        if(!strcmp(buffer, "uniform"))
+        int maxNameLength = 0;
+        GLsizei length = 0, count = 0;
+        GLenum type = GL_NONE;
+        glGetProgramiv(ID, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength);
+
+        char* buffer = new char[maxNameLength];
+        for(int i = 0; i < uniformCount; i++)
         {
-            fscanf(vsRaw, "%s %s", buffer, buffer);
-            buffer[strlen(buffer) - 1] = '\0';
-            
-            uniforms[std::string(buffer)] = 0;
+            glGetActiveUniform(ID, i, maxNameLength, &length, &count, &type, buffer);
+
+            uniforms[std::string(buffer, length)] = glGetUniformLocation(ID, buffer);
         }
+
+        delete[] buffer;
     }
-
-    while(fscanf(fsRaw, "%s", buffer) != EOF)
-    {
-        if(!strcmp(buffer, "uniform"))
-        {
-            fscanf(fsRaw, "%s %s", buffer, buffer);
-            buffer[strlen(buffer) - 1] = '\0';
-
-            uniforms[std::string(buffer)] = 0;
-        }
-    }
-
-    // Populate unordered map of uniform names
-    // with actual locations
-    for(auto& u : uniforms)
-        uniforms[u.first] = glGetUniformLocation(ID, u.first.c_str());
 
     // Clean up
     glDetachShader(ID, vertex);
