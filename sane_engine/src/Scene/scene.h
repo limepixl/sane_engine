@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
+#include <glm/vec3.hpp>
 #include <Mesh/mesh.h>
 #include <Texture/texture.h>
-#include <glm/vec3.hpp>
 
 struct Entity
 {
@@ -21,4 +21,4 @@ struct Scene
 };
 
 void DrawScene(Scene& scene, struct Shader& shader);
-void DrawLights(Scene& scene, struct Shader& shader, Mesh& mesh);
+void DrawLights(Scene& scene, struct Shader& shader, struct Mesh& mesh);

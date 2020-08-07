@@ -1,12 +1,12 @@
 #pragma once
-#include <glad/glad.h>
+#include <inttypes.h>
 
 struct Mesh
 {
-	GLuint VAO;
-	GLuint verticesVBO;
-	GLuint texCoordsVBO;
-	GLuint normalsVBO;
+	uint32_t VAO;
+	uint32_t verticesVBO;
+	uint32_t texCoordsVBO;
+	uint32_t normalsVBO;
 
 	int numVertices;
 };

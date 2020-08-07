@@ -1,7 +1,9 @@
 #include "display.h"
+#include <glm/gtc/matrix_transform.hpp>
 #include <Camera/camera.h>
 #include <Scene/scene.h>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <cstring>
 
 Display CreateDisplay(int width, int height, const char* title)

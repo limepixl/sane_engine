@@ -27,14 +27,9 @@ void DrawScene(Scene& scene, Shader& shader)
 		glUniform1i(shader.locations["diffusetex"], e.diffuseIndex);
 		glUniform1i(shader.locations["speculartex"], e.specularIndex);
 
-		char luString[50];
-		for(size_t i = 0; i < scene.lights.size(); i++)
-		{
-			// NOTE: The shader loading process doesn't account for uniform arrays so I can't use the uniform unordered map
-			// for grabbing the pre-found uniform locations. 
-			sprintf(luString, "lightPositions[%d]", (int)i);
-			glUniform3fv(shader.locations[luString], 1, &scene.lights[i][0]);
-		}
+		// NOTE: Uncomment this if moving lights are in the scene
+		// for(size_t i = 0; i < scene.lights.size(); i++)
+		//   glUniform3fv(shader.locations["lightPositions[0]"] + (GLint)i, 1, &scene.lights[i][0]);
 
 		Mesh& mesh = scene.meshes[e.meshIndex];
 		if(lastMeshIndex != (int)e.meshIndex)

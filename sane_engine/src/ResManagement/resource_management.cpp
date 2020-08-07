@@ -155,7 +155,7 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     glLinkProgram(ID);
 
     // Get uniform names and locations from program 
-    std::unordered_map<std::string, GLint> uniforms;
+    std::unordered_map<std::string, uint32_t> uniforms;
 
     int uniformCount = 0;
     glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &uniformCount);
@@ -199,7 +199,7 @@ Mesh LoadMeshFromOBJ(const char* path)
     if(!objRaw)
     {
         printf("Failed to open OBJ file at path: %s\n", path);
-        return {};
+        exit(-1);
     }
 
     std::vector<float> vertices;
@@ -304,7 +304,10 @@ Scene LoadSceneFromFile(const char* path)
     
     FILE* rawScene = fopen(path, "r");
     if(!rawScene)
+    {
         printf("Failed to open scene file at path: %s\n", path);
+        exit(-1);
+    }
 
     char token[100];;
     while(true)

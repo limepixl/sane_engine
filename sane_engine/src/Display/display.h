@@ -1,14 +1,11 @@
 #pragma once
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <glm/mat4x4.hpp>
-#include <cstdio>
 
 struct Display
 {
 	char title[100];
 	int width, height;
-	GLFWwindow* window;
+	struct GLFWwindow* window;
 
 	// Used for delta time calc
 	float deltaTime, lastFrame, lastTime;
@@ -18,10 +15,10 @@ struct Display
 
 struct FBO_Data
 {
-	GLuint FBO;
-	GLuint color;
-	GLuint textureIndex;
-	GLuint depth24stencil8;
+	uint32_t FBO;
+	uint32_t color;
+	uint32_t textureIndex;
+	uint32_t depth24stencil8;
 };
 
 Display CreateDisplay(int width, int height, const char* title);

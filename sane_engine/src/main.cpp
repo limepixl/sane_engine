@@ -2,7 +2,7 @@
 #include <ResManagement/resource_management.h>
 #include <Display/display.h>
 #include <Camera/camera.h>
-#include <cstdio>
+#include <GLFW/glfw3.h>
 
 int main()
 {

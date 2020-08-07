@@ -1,4 +1,5 @@
 #include "mesh.h"
+#include <glad/glad.h>
 
 Mesh GenerateMesh(float* vertices, int numVertices, float* texCoords, int numTexCoords, float* normals, int numNormals)
 {
