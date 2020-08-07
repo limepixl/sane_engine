@@ -101,7 +101,7 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     rewind(vsRaw);
 
     char* vsBuffer = new char[size + 1];
-    fread(vsBuffer, 1, size, vsRaw);
+    size_t readSize = fread(vsBuffer, 1, size, vsRaw);
     vsBuffer[size] = '\0';
     rewind(vsRaw);
 
@@ -114,7 +114,7 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     rewind(fsRaw);
 
     char* fsBuffer = new char[size + 1];
-    fread(fsBuffer, 1, size, fsRaw);
+    readSize = fread(fsBuffer, 1, size, fsRaw);
     fsBuffer[size] = '\0';
     rewind(fsRaw);
 
@@ -213,10 +213,12 @@ Mesh LoadMeshFromOBJ(const char* path)
     char buffer[100];
     while(fscanf(objRaw, "%s ", buffer) != EOF)
     {
+        buffer[strlen(buffer)] = '\0';
         if(!strcmp(buffer, "v"))
         {
             float x, y, z;
-            fscanf(objRaw, "%f %f %f\n", &x, &y, &z);
+            if(fscanf(objRaw, "%f %f %f\n", &x, &y, &z) == EOF)
+                printf("Invalid format detected in OBJ file!\n");
 
             vertices.push_back(x);
             vertices.push_back(y);
@@ -225,7 +227,8 @@ Mesh LoadMeshFromOBJ(const char* path)
         else if(!strcmp(buffer, "vt"))
         {
             float u, v;
-            fscanf(objRaw, "%f %f\n", &u, &v);
+            if(fscanf(objRaw, "%f %f\n", &u, &v) == EOF)
+                printf("Invalid format detected in OBJ file!\n");
 
             uvs.push_back(u);
             uvs.push_back(v);
@@ -233,7 +236,8 @@ Mesh LoadMeshFromOBJ(const char* path)
         else if(!strcmp(buffer, "vn"))
         {
             float x, y, z;
-            fscanf(objRaw, "%f %f %f\n", &x, &y, &z);
+            if(fscanf(objRaw, "%f %f %f\n", &x, &y, &z) == EOF)
+                printf("Invalid format detected in OBJ file!\n");
 
             normals.push_back(x);
             normals.push_back(y);
@@ -242,7 +246,8 @@ Mesh LoadMeshFromOBJ(const char* path)
         else if(!strcmp(buffer, "f"))
         {
             int v1, v2, v3, t1, t2, t3, n1, n2, n3;
-            fscanf(objRaw, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);
+            if(fscanf(objRaw, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3) == EOF)
+                printf("Invalid format detected in OBJ file!\n");
 
             vertexIndices.push_back(v1 - 1);
             vertexIndices.push_back(v2 - 1);
@@ -315,9 +320,11 @@ Scene LoadSceneFromFile(const char* path)
         if(fscanf(rawScene, "%s", token) == EOF)
             break;
 
+        token[strlen(token)] = '\0';
         if(!strcmp(token, "m"))
         {
-            fscanf(rawScene, "%s\n", token);
+            if(fscanf(rawScene, "%s\n", token) == EOF)
+                printf("Invalid format detected in scene file!\n");
             char prepend[100] = "res/models/";
             Mesh tmp = LoadMeshFromOBJ(strcat(prepend, token));
             meshes.push_back(tmp);
@@ -326,7 +333,8 @@ Scene LoadSceneFromFile(const char* path)
 
         if(!strcmp(token, "t"))
         {
-            fscanf(rawScene, "%s\n", token);
+            if(fscanf(rawScene, "%s\n", token) == EOF)
+                printf("Invalid format detected in scene file!\n");
             char prepend[100] = "res/image/";
             textures.push_back(LoadTextureFromFile(strcat(prepend, token), (int)textures.size()));
             continue;
@@ -337,7 +345,8 @@ Scene LoadSceneFromFile(const char* path)
             unsigned int modelIndex, diffuseIndex, specularIndex;
 
             glm::vec3 pos; glm::vec3 rot; glm::vec3 scale;
-            fscanf(rawScene, "%d %d %d %f %f %f %f %f %f %f %f %f ;\n", &modelIndex, &diffuseIndex, &specularIndex, &pos.x, &pos.y, &pos.z, &rot.x, &rot.y, &rot.z, &scale.x, &scale.y, &scale.z);
+            if(fscanf(rawScene, "%d %d %d %f %f %f %f %f %f %f %f %f ;\n", &modelIndex, &diffuseIndex, &specularIndex, &pos.x, &pos.y, &pos.z, &rot.x, &rot.y, &rot.z, &scale.x, &scale.y, &scale.z) == EOF)
+                printf("Invalid format detected in scene file!\n");
 
             entities.push_back({ modelIndex, diffuseIndex, specularIndex, pos, rot, scale });
             continue;
@@ -346,7 +355,8 @@ Scene LoadSceneFromFile(const char* path)
         if(!strcmp(token, "l"))
         {
             glm::vec3 lightPos;
-            fscanf(rawScene, "%f %f %f\n", &lightPos.x, &lightPos.y, &lightPos.z);
+            if(fscanf(rawScene, "%f %f %f\n", &lightPos.x, &lightPos.y, &lightPos.z) == EOF)
+                printf("Invalid format detected in scene file!\n");
             lights.push_back(lightPos);
             continue;
         }

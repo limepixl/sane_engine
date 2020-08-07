@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <cstring>
+#include <cstdio>
 
 Display CreateDisplay(int width, int height, const char* title)
 {
