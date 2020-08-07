@@ -336,7 +336,7 @@ Scene LoadSceneFromFile(const char* path)
             if(fscanf(rawScene, "%s\n", token) == EOF)
                 printf("Invalid format detected in scene file!\n");
             char prepend[100] = "res/image/";
-            textures.push_back(LoadTextureFromFile(strcat(prepend, token), (int)textures.size()));
+            textures.push_back(LoadTextureFromFile(strcat(prepend, token), Texture::GlobalTextureCount++));
             continue;
         }
 
