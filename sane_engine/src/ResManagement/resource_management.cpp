@@ -359,6 +359,8 @@ MeshIndexed LoadMeshIndexedFromOBJ(const char* path)
 
     fclose(objRaw);
 
+    // A big thank you to this answer for the algorithm.
+    // https://stackoverflow.com/a/23356738
     std::vector<float> finalVertices;
     std::vector<float> finalUVs;
     std::vector<float> finalNormals;
@@ -398,7 +400,7 @@ MeshIndexed LoadMeshIndexedFromOBJ(const char* path)
         finalIndices.push_back(combinedIndex);
     }
 
-    return GenerateMeshIndexed(finalVertices.data(), finalVertices.size(), finalIndices.data(), finalIndices.size(), finalUVs.data(), finalUVs.size(), finalNormals.data(), finalNormals.size());
+    return GenerateMeshIndexed(finalVertices.data(), (int)finalVertices.size(), finalIndices.data(), (int)finalIndices.size(), finalUVs.data(), (int)finalUVs.size(), finalNormals.data(), (int)finalNormals.size());
 }
 
 // Simple bubble sort based on the mesh index
