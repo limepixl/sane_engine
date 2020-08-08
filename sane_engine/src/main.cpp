@@ -102,9 +102,9 @@ int main()
 
 	// Clean up
 	for(auto& m : scene.meshes)
-		Clean(m);
+		CleanMeshIndexed(m);
 	for(auto& t : scene.textures)
-		Clean(t);
+		CleanTexture(t);
 
 	glfwTerminate();
 	return 0;

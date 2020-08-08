@@ -14,7 +14,7 @@ struct Entity
 
 struct Scene
 {
-	std::vector<Mesh> meshes;
+	std::vector<MeshIndexed> meshes;
 	std::vector<Texture> textures;
 	std::vector<Entity> entities;
 	std::vector<glm::vec3> lights;

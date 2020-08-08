@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <vector>
 #include <unordered_map>
+#include <map>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -192,7 +193,6 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     return { ID, uniforms };
 }
 
-// TODO: Create an indexed version of this
 Mesh LoadMeshFromOBJ(const char* path)
 {
     FILE* objRaw = fopen(path, "r");
@@ -285,6 +285,122 @@ Mesh LoadMeshFromOBJ(const char* path)
     return GenerateMesh(finalVertices.data(), (int)finalVertices.size(), finalUVs.data(), (int)finalUVs.size(), finalNormals.data(), (int)finalNormals.size());
 }
 
+MeshIndexed LoadMeshIndexedFromOBJ(const char* path)
+{
+    FILE* objRaw = fopen(path, "r");
+    if(!objRaw)
+    {
+        printf("Failed to open OBJ file at path: %s\n", path);
+        exit(-1);
+    }
+
+    std::vector<float> vertices;
+    std::vector<float> uvs;
+    std::vector<float> normals;
+
+    std::vector<unsigned int> vertexIndices;
+    std::vector<unsigned int> textureIndices;
+    std::vector<unsigned int> normalIndices;
+
+    std::map<std::vector<int>, int> indexMap;
+
+    char buffer[100];
+    while(fscanf(objRaw, "%s ", buffer) != EOF)
+    {
+        buffer[strlen(buffer)] = '\0';
+        if(!strcmp(buffer, "v"))
+        {
+            float x, y, z;
+            if(fscanf(objRaw, "%f %f %f\n", &x, &y, &z) == EOF)
+                printf("Invalid format detected in OBJ file!\n");
+
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
+        }
+        else if(!strcmp(buffer, "vt"))
+        {
+            float u, v;
+            if(fscanf(objRaw, "%f %f\n", &u, &v) == EOF)
+                printf("Invalid format detected in OBJ file!\n");
+
+            uvs.push_back(u);
+            uvs.push_back(v);
+        }
+        else if(!strcmp(buffer, "vn"))
+        {
+            float x, y, z;
+            if(fscanf(objRaw, "%f %f %f\n", &x, &y, &z) == EOF)
+                printf("Invalid format detected in OBJ file!\n");
+
+            normals.push_back(x);
+            normals.push_back(y);
+            normals.push_back(z);
+        }
+        else if(!strcmp(buffer, "f"))
+        {
+            int v1, v2, v3, t1, t2, t3, n1, n2, n3;
+            if(fscanf(objRaw, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3) == EOF)
+                printf("Invalid format detected in OBJ file!\n");
+
+            vertexIndices.push_back(v1 - 1);
+            vertexIndices.push_back(v2 - 1);
+            vertexIndices.push_back(v3 - 1);
+
+            textureIndices.push_back(t1 - 1);
+            textureIndices.push_back(t2 - 1);
+            textureIndices.push_back(t3 - 1);
+
+            normalIndices.push_back(n1 - 1);
+            normalIndices.push_back(n2 - 1);
+            normalIndices.push_back(n3 - 1);
+        }
+    }
+
+    fclose(objRaw);
+
+    std::vector<float> finalVertices;
+    std::vector<float> finalUVs;
+    std::vector<float> finalNormals;
+    std::vector<unsigned int> finalIndices;
+
+    int nextCombinedIndex = 0;
+    for(size_t i = 0; i < vertexIndices.size(); i++)
+    {
+        int combinedIndex;
+        int vindex = vertexIndices[i];
+        int uvindex = textureIndices[i];
+        int nindex = normalIndices[i];
+
+        std::vector<int> indexData{ vindex, uvindex, nindex };
+
+        // If map contains this index triplet
+        if(indexMap.count(indexData) != 0)
+            combinedIndex = indexMap[indexData];
+        else
+        {
+            combinedIndex = nextCombinedIndex;
+            indexMap[indexData] = combinedIndex;
+            nextCombinedIndex++;
+
+            finalVertices.push_back(vertices[3 * vindex]);
+            finalVertices.push_back(vertices[3 * vindex + 1]);
+            finalVertices.push_back(vertices[3 * vindex + 2]);
+
+            finalUVs.push_back(uvs[2 * uvindex]);
+            finalUVs.push_back(uvs[2 * uvindex + 1]);
+
+            finalNormals.push_back(normals[3 * nindex]);
+            finalNormals.push_back(normals[3 * nindex + 1]);
+            finalNormals.push_back(normals[3 * nindex + 2]);
+        }
+
+        finalIndices.push_back(combinedIndex);
+    }
+
+    return GenerateMeshIndexed(finalVertices.data(), finalVertices.size(), finalIndices.data(), finalIndices.size(), finalUVs.data(), finalUVs.size(), finalNormals.data(), finalNormals.size());
+}
+
 // Simple bubble sort based on the mesh index
 void SortEntitiesByMesh(std::vector<Entity>& entities)
 {
@@ -302,7 +418,7 @@ void SortEntitiesByMesh(std::vector<Entity>& entities)
 
 Scene LoadSceneFromFile(const char* path)
 {
-    std::vector<Mesh> meshes;
+    std::vector<MeshIndexed> meshes;
     std::vector<Texture> textures;
     std::vector<Entity> entities;
     std::vector<glm::vec3> lights;
@@ -326,7 +442,7 @@ Scene LoadSceneFromFile(const char* path)
             if(fscanf(rawScene, "%s\n", token) == EOF)
                 printf("Invalid format detected in scene file!\n");
             char prepend[100] = "res/models/";
-            Mesh tmp = LoadMeshFromOBJ(strcat(prepend, token));
+            MeshIndexed tmp = LoadMeshIndexedFromOBJ(strcat(prepend, token));
             meshes.push_back(tmp);
             continue;
         } 

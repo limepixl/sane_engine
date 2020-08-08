@@ -12,7 +12,7 @@ void UnbindTexture()
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Clean(Texture& t)
+void CleanTexture(Texture& t)
 {
     glDeleteTextures(1, &t.ID);
 }

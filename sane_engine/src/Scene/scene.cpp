@@ -31,16 +31,16 @@ void DrawScene(Scene& scene, Shader& shader)
 		// for(size_t i = 0; i < scene.lights.size(); i++)
 		//   glUniform3fv(shader.locations["lightPositions[0]"] + (GLint)i, 1, &scene.lights[i][0]);
 
-		Mesh& mesh = scene.meshes[e.meshIndex];
+		MeshIndexed& mesh = scene.meshes[e.meshIndex];
 		if(lastMeshIndex != (int)e.meshIndex)
 		{
-			DrawMesh(mesh, false);
+			DrawMeshIndexed(mesh, false);
 			lastMeshIndex = e.meshIndex;
 
 			continue;
 		}
 		
-		DrawMesh(mesh, true);
+		DrawMeshIndexed(mesh, true);
 	}
 
 	glBindVertexArray(0);

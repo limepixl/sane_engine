@@ -12,4 +12,4 @@ struct Texture
 void BindTexture(Texture& texture);
 void UnbindTexture();
 
-void Clean(Texture& t);
+void CleanTexture(Texture& t);
