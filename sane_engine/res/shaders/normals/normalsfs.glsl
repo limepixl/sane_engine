@@ -34,7 +34,14 @@ void main()
 	vec3 result = vec3(0.0);
 	
 	for(int i = 0; i < MAX_LIGHTS; i++)
+	{
+		// This might be more expensive than checking all MAX_LIGHTS number of lights
+		vec3 current = lightPositions[i];
+		if(current.x == current.y && current.y == current.z && abs(current.x - 1000.0) < 0.1)
+			break;
+
 		result += CalcLight(lightPositions[i], normal, FragPos, viewDir);
+	}
 
 	color = vec4(result, 1.0);
 }
