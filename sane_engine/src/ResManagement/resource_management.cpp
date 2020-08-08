@@ -37,10 +37,17 @@ Texture LoadTextureFromFile(const char* path, unsigned int index)
         else if(channels == 4)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         else
+        {
             printf("Image loaded isn't in any of the supported formats!\n(Supported: RGB, RGBA)\n");
+            stbi_image_free(data);
+
+            glDeleteTextures(1, &ID);
+            exit(-1);
+        }
 
         glGenerateMipmap(ID);
 
+        printf("Loaded texture file at: %s\n", path);
         stbi_image_free(data);
 
         return { width, height, channels, ID, index };
@@ -282,6 +289,8 @@ Mesh LoadMeshFromOBJ(const char* path)
         finalNormals.push_back(normals[3 * normalIndices[i] + 2]);
     }
 
+    printf("Loaded mesh from .obj file at: %s\n", path);
+
     return GenerateMesh(finalVertices.data(), (int)finalVertices.size(), finalUVs.data(), (int)finalUVs.size(), finalNormals.data(), (int)finalNormals.size());
 }
 
@@ -399,6 +408,8 @@ MeshIndexed LoadMeshIndexedFromOBJ(const char* path)
 
         finalIndices.push_back(combinedIndex);
     }
+
+    printf("Loaded indexed mesh from .obj file at: %s\n", path);
 
     return GenerateMeshIndexed(finalVertices.data(), (int)finalVertices.size(), finalIndices.data(), (int)finalIndices.size(), finalUVs.data(), (int)finalUVs.size(), finalNormals.data(), (int)finalNormals.size());
 }
