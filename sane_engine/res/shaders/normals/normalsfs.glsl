@@ -9,11 +9,13 @@ uniform sampler2D speculartex;
 
 uniform vec3 cameraPos;
 
-#define MAX_LIGHTS 2
-uniform vec3 lightPositions[MAX_LIGHTS];
+#define MAX_LIGHTS 10
+#define LIGHT_DISTANCE 1.0 / 8.0
+uniform vec3 lightPositions[MAX_LIGHTS] = vec3[MAX_LIGHTS](1000.0);
 
 vec3 CalcLight(vec3 lightPos, vec3 normal, vec3 FragPos, vec3 viewDir)
 {
+	float dist = length(lightPos - FragPos) * LIGHT_DISTANCE;
 	vec3 lightDir = normalize(lightPos - FragPos);
 	vec3 reflectedDir = reflect(-lightDir, normal);
 
@@ -23,7 +25,7 @@ vec3 CalcLight(vec3 lightPos, vec3 normal, vec3 FragPos, vec3 viewDir)
 	float spec = max(0.0, dot(viewDir, reflectedDir));
 	float specular = texture(speculartex, texCoords).b * spec;
 
-	return diffuse * (1.0 + specular);
+	return max(0.0, 1 - dist) * diffuse * (1.0 + specular);
 }
 
 void main()
