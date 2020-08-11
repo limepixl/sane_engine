@@ -11,7 +11,12 @@ uniform vec3 cameraPos;
 
 #define MAX_LIGHTS 10
 #define LIGHT_DISTANCE 1.0 / 8.0
-uniform vec3 lightPositions[MAX_LIGHTS] = vec3[MAX_LIGHTS](1000.0);
+uniform vec3 lightPositions[MAX_LIGHTS] = vec3[MAX_LIGHTS]
+(
+	vec3(1000.0), vec3(1000.0), vec3(1000.0), vec3(1000.0), 
+	vec3(1000.0), vec3(1000.0), vec3(1000.0), vec3(1000.0), 
+	vec3(1000.0), vec3(1000.0)
+);
 
 vec3 CalcLight(vec3 lightPos, vec3 normal, vec3 FragPos, vec3 viewDir)
 {
