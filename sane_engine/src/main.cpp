@@ -17,7 +17,7 @@ int main()
 
 	// Shader and scene used for drawing everything else in the scene
 	Shader shader = LoadShaderFromFile("res/shaders/normals/normalsvs.glsl", "res/shaders/normals/normalsfs.glsl");
-	Scene scene = LoadSceneFromFile("res/scenes/stressTest.txt");
+	Scene scene = LoadSceneFromFile("res/scenes/scene.txt");
 
 	// Pass light positions to main shader for light calculations
 	glUseProgram(shader.ID);
@@ -42,15 +42,35 @@ int main()
 	Texture cubemap = LoadCubemapFromFile(paths, 6, Texture::GlobalTextureCount++);
 	Mesh cubemapMesh = GenerateCube();
 	Shader cubemapShader = LoadShaderFromFile("res/shaders/skybox/skyboxvs.glsl", "res/shaders/skybox/skyboxfs.glsl");
-	
+
+	// Bind the uniform blocks from the vertex shaders to the bindign point 0
+	uint32_t uniformBlockMatricesMain = glGetUniformBlockIndex(shader.ID, "Matrices");
+	glUniformBlockBinding(shader.ID, uniformBlockMatricesMain, 0);
+	uint32_t uniformBlockMatricesLight = glGetUniformBlockIndex(lightShader.ID, "Matrices");
+	glUniformBlockBinding(lightShader.ID, uniformBlockMatricesLight, 0);
+	uint32_t uniformBlockMatricesCubemap = glGetUniformBlockIndex(cubemapShader.ID, "Matrices");
+	glUniformBlockBinding(cubemapShader.ID, uniformBlockMatricesCubemap, 0);
+
+	// Allocate 2*sizeof(mat4) bytes and fill then with null
+	uint32_t UBOMatrices;
+	glGenBuffers(1, &UBOMatrices);
+	glBindBuffer(GL_UNIFORM_BUFFER, UBOMatrices);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+
+	// Bind the whole buffer to binding point 0
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0, UBOMatrices);
+
 	FBO_Data FBO = CreateFBO(display, scene);
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)display.width / (float)display.height, 0.01f, 1000.0f);
 	
+	// Pass the projection matrix to the uniform buffer
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &projection[0][0]);
+
 	while(!glfwWindowShouldClose(display.window))
 	{
 		DeltaTimeCalc(display);
 		ProcessInput(display, camera);
-		CheckForResize(display, FBO, projection);
+		CheckForResize(display, FBO, UBOMatrices, projection);
 
 		// Draw scene to framebuffer object
 		glBindFramebuffer(GL_FRAMEBUFFER, FBO.FBO);
@@ -60,25 +80,23 @@ int main()
 		glm::mat4 view = GetViewMatrix(camera);
 		glm::mat4 nonTranslatedView = glm::mat4(glm::mat3(view));
 
+		// Pass the view matrix to the uniform buffer
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &view[0][0]);
+
 		// Firstly, draw the whole scene
 		glUseProgram(shader.ID);
-		glUniformMatrix4fv(shader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
-		glUniformMatrix4fv(shader.locations["view"], 1, GL_FALSE, &view[0][0]);
 		glUniform3fv(shader.locations["cameraPos"], 1, &camera.position[0]);
 		DrawScene(scene, shader);
 
 		// Next, draw the lights as cubes
 		glUseProgram(lightShader.ID);
-		glUniformMatrix4fv(lightShader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
-		glUniformMatrix4fv(lightShader.locations["view"], 1, GL_FALSE, &view[0][0]);
 		DrawLights(scene, lightShader, lightMesh);
 
 		// Lastly, draw the skybox wherever the background color is visible
 		glDepthMask(GL_FALSE);
 		glDepthFunc(GL_LEQUAL);
 		glUseProgram(cubemapShader.ID);
-		glUniformMatrix4fv(cubemapShader.locations["projection"], 1, GL_FALSE, &projection[0][0]);
-		glUniformMatrix4fv(cubemapShader.locations["view"], 1, GL_FALSE, &nonTranslatedView[0][0]);
+		glUniformMatrix4fv(cubemapShader.locations["nonTranslatedView"], 1, GL_FALSE, &nonTranslatedView[0][0]);
 		glUniform1i(cubemapShader.locations["cubemap"], cubemap.index);
 		DrawMesh(cubemapMesh, false);
 		glDepthMask(GL_TRUE);

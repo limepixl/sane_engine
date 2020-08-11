@@ -92,7 +92,7 @@ void ProcessInput(Display& display, Camera& camera)
 	camera.forward = glm::normalize(camera.forward);
 }
 
-void CheckForResize(Display& display, FBO_Data& fbo, glm::mat4& projection)
+void CheckForResize(Display& display, FBO_Data& fbo, uint32_t UBO, glm::mat4& projection)
 {
 	int w, h;
 	glfwGetWindowSize(display.window, &w, &h);
@@ -117,6 +117,9 @@ void CheckForResize(Display& display, FBO_Data& fbo, glm::mat4& projection)
 	glBindRenderbuffer(GL_RENDERBUFFER, fbo.depth24stencil8);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	// Update the uniform buffer with the updated projection matrix
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &projection[0][0]);
 }
 
 void DeltaTimeCalc(Display& display)
