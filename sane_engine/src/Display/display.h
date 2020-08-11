@@ -24,6 +24,6 @@ struct FBO_Data
 Display CreateDisplay(int width, int height, const char* title);
 void DeltaTimeCalc(Display& display);
 void ProcessInput(Display& display, struct Camera& camera);
-void CheckForResize(Display& display, FBO_Data& fbo, uint32_t UBO, glm::mat4& projection);
+void CheckForResize(Display& display, FBO_Data& fbo, glm::mat4& projection);
 
 FBO_Data CreateFBO(Display& display, struct Scene& scene);

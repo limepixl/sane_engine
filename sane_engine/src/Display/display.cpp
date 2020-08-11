@@ -92,7 +92,7 @@ void ProcessInput(Display& display, Camera& camera)
 	camera.forward = glm::normalize(camera.forward);
 }
 
-void CheckForResize(Display& display, FBO_Data& fbo, uint32_t UBO, glm::mat4& projection)
+void CheckForResize(Display& display, FBO_Data& fbo, glm::mat4& projection)
 {
 	int w, h;
 	glfwGetWindowSize(display.window, &w, &h);

@@ -70,7 +70,7 @@ int main()
 	{
 		DeltaTimeCalc(display);
 		ProcessInput(display, camera);
-		CheckForResize(display, FBO, UBOMatrices, projection);
+		CheckForResize(display, FBO, projection);
 
 		// Draw scene to framebuffer object
 		glBindFramebuffer(GL_FRAMEBUFFER, FBO.FBO);
