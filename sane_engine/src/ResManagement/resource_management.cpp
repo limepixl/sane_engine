@@ -97,12 +97,17 @@ Texture LoadCubemapFromFile(std::string* paths, int numStrings, unsigned int ind
     return {0, 0, 3, ID, index};
 }
 
-Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath)
+Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath, const char* geometryShaderPath)
 {
+    bool geometryShader = geometryShaderPath != nullptr;
+
     // Load files into memory
     FILE* vsRaw = fopen(vertexShaderPath, "rb");
     if(!vsRaw)
+    {
         printf("Failed to open file at path: %s\n", vertexShaderPath);
+        exit(-1);
+    }
 
     fseek(vsRaw, 0, SEEK_END);
     long size = ftell(vsRaw);
@@ -112,19 +117,6 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     size_t readSize = fread(vsBuffer, 1, size, vsRaw);
     vsBuffer[size] = '\0';
     rewind(vsRaw);
-
-    FILE* fsRaw = fopen(fragmentShaderPath, "rb");
-    if(!fsRaw)
-        printf("Failed to open file at path: %s\n", fragmentShaderPath);
-
-    fseek(fsRaw, 0, SEEK_END);
-    size = ftell(fsRaw);
-    rewind(fsRaw);
-
-    char* fsBuffer = new char[size + 1];
-    readSize = fread(fsBuffer, 1, size, fsRaw);
-    fsBuffer[size] = '\0';
-    rewind(fsRaw);
 
     // Create vertex shader object
     GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
@@ -141,6 +133,22 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
         glGetShaderInfoLog(vertex, 1024, &length, message);
         printf("Vertex Shader Compilation Errors:\n%s\n", message);
     }
+
+    FILE* fsRaw = fopen(fragmentShaderPath, "rb");
+    if(!fsRaw)
+    {
+        printf("Failed to open file at path: %s\n", fragmentShaderPath);
+        exit(-1);
+    }
+
+    fseek(fsRaw, 0, SEEK_END);
+    size = ftell(fsRaw);
+    rewind(fsRaw);
+
+    char* fsBuffer = new char[size + 1];
+    readSize = fread(fsBuffer, 1, size, fsRaw);
+    fsBuffer[size] = '\0';
+    rewind(fsRaw);
 
     // Create fragment shader object
     GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -160,6 +168,47 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     GLuint ID = glCreateProgram();
     glAttachShader(ID, vertex);
     glAttachShader(ID, fragment);
+
+    GLuint geometry = 0;
+    if(geometryShader)
+    {
+        FILE* gsRaw = fopen(geometryShaderPath, "rb");
+        if(!gsRaw)
+        {
+            printf("Failed to open file at path: %s\n", geometryShaderPath);
+            exit(-1);
+        }
+
+        fseek(gsRaw, 0, SEEK_END);
+        size = ftell(gsRaw);
+        rewind(gsRaw);
+
+        char* gsBuffer = new char[size + 1];
+        readSize = fread(gsBuffer, 1, size, gsRaw);
+        gsBuffer[size] = '\0';
+        rewind(gsRaw);
+
+        // Create vertex shader object
+        geometry = glCreateShader(GL_GEOMETRY_SHADER);
+        glShaderSource(geometry, 1, &gsBuffer, 0);
+        glCompileShader(geometry);
+
+        // Check compilation errors
+        glGetShaderiv(geometry, GL_COMPILE_STATUS, &compiled);
+        if(compiled != GL_TRUE)
+        {
+            GLsizei length = 0;
+            GLchar message[1024];
+            glGetShaderInfoLog(geometry, 1024, &length, message);
+            printf("Geometry Shader Compilation Errors:\n%s\n", message);
+        }
+
+        glAttachShader(ID, geometry);
+
+        fclose(gsRaw);
+        delete[] gsBuffer;
+    }
+
     glLinkProgram(ID);
 
     // Get uniform names and locations from program 
@@ -191,6 +240,11 @@ Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShad
     glDetachShader(ID, fragment);
     glDeleteShader(vertex);
     glDeleteShader(fragment);
+    if(geometryShader)
+    {
+        glDetachShader(ID, geometry);
+        glDeleteShader(geometry);
+    }
 
     fclose(vsRaw);
     fclose(fsRaw);

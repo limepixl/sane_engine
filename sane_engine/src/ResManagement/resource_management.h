@@ -6,7 +6,7 @@
 
 Texture LoadTextureFromFile(const char* path, unsigned int index);
 Texture LoadCubemapFromFile(std::string* paths, int numStrings, unsigned int index);
-Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath);
+Shader LoadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath, const char* geometryShaderPath = nullptr);
 Mesh LoadMeshFromOBJ(const char* path);
 MeshIndexed LoadMeshIndexedFromOBJ(const char* path);
 Scene LoadSceneFromFile(const char* path);
