@@ -17,7 +17,7 @@ int main()
 
 	// Shader and scene used for drawing everything else in the scene
 	Shader shader = LoadShaderFromFile("res/shaders/normals/normalsvs.glsl", "res/shaders/normals/normalsfs.glsl");
-	Scene scene = LoadSceneFromFile("res/scenes/scene.txt");
+	Scene scene = LoadSceneFromFile("res/scenes/stressTest.txt");
 
 	// Pass light positions to main shader for light calculations
 	glUseProgram(shader.ID);
