@@ -1,5 +1,2 @@
-TODO:
-* Batching
-* Move over to own math lib (especially for matrix transformations)
-* Experiment with quaternions
-* Use JSON instead of own format for scene loading (Might be overkill)
+![1](https://github.com/limepixl/sane_engine/blob/master/img/1.png)
+![2](https://github.com/limepixl/sane_engine/blob/master/img/2.png)
