@@ -16,7 +16,7 @@ Display CreateDisplay(int width, int height, const char* title)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_FALSE); // TODO: Definitely doesn't work on Linux
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE); // TODO: Definitely doesn't work on Linux
 
 	// Create GLFW window
 	window = glfwCreateWindow(width, height, title, nullptr, nullptr);
