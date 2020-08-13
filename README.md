@@ -1,5 +1,6 @@
 Windows:
 - Use the Visual Studio .sln files
+
 Linux:
 - Execute `linux-prepare-build.sh` followed by `build.sh` and then `sane_engine/a.out`
 
