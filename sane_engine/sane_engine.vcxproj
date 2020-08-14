@@ -57,7 +57,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\dev\projects\sane_engine\thirdparty\glm;C:\dev\projects\sane_engine\thirdparty\GLFW\include;C:\dev\projects\sane_engine\sane_engine\src;C:\dev\projects\sane_engine\thirdparty\glad\include;%(AdditionalIncludeDirectories);C:\dev\projects\sane_engine\thirdparty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\thirdparty\glm;..\thirdparty\GLFW\include;..\thirdparty\glad\include;%(AdditionalIncludeDirectories);C:\dev\projects\sane_engine\thirdparty</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -74,7 +74,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\dev\projects\sane_engine\sane_engine\src;C:\dev\projects\sane_engine\thirdparty\glm;C:\dev\projects\sane_engine\thirdparty\GLFW\include;C:\dev\projects\sane_engine\thirdparty\glad\include;%(AdditionalIncludeDirectories);C:\dev\projects\sane_engine\thirdparty</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\thirdparty\glm;..\thirdparty\GLFW\include;..\thirdparty\glad\include;%(AdditionalIncludeDirectories);C:\dev\projects\sane_engine\thirdparty</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
